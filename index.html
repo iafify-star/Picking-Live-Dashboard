@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>noon minutes · Picking Live</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+  <header class="top">
+    <div class="brand">
+      <div class="logo-box">
+        <img src="assets/noon-logo.svg" alt="noon" class="noon-mark" />
+        <span class="minutes">minutes</span>
+      </div>
+      <div class="brand-copy">
+        <h1>Picking Live Dashboard</h1>
+        <p>كل يوزر · كل ساعة · كمية وSKU</p>
+      </div>
+    </div>
+    <div class="live-wrap">
+      <div class="live-pill" id="livePill">
+        <span class="dot"></span>
+        <span id="liveText">LIVE</span>
+      </div>
+      <div class="meta" id="metaLine">جاري السحب من الشيت...</div>
+      <button id="refreshBtn" type="button">تحديث الآن</button>
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <label class="field">
+      <span>من تاريخ</span>
+      <input id="dateFrom" type="date" />
+    </label>
+    <label class="field">
+      <span>إلى تاريخ</span>
+      <input id="dateTo" type="date" />
+    </label>
+    <button id="allDaysBtn" class="ghost" type="button">كل التواريخ</button>
+    <label class="field grow">
+      <span>بحث يوزر</span>
+      <input id="searchInput" type="search" placeholder="اكتب اليوزر نيم..." />
+    </label>
+    <label class="field">
+      <span>الترتيب</span>
+      <select id="sortSelect">
+        <option value="qty">الأعلى كمية</option>
+        <option value="skus">الأعلى SKU</option>
+        <option value="name">الاسم</option>
+      </select>
+    </label>
+    <div class="countdown" id="countdown">تحديث بعد 60ث</div>
+  </section>
+  <div class="day-chips" id="dayChips"></div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="panel matrix-panel">
+    <div class="panel-head">
+      <div>
+        <h2>إنتاجية كل يوزر كل ساعة</h2>
+      </div>
+      <div class="head-actions">
+        <button id="exportBtn" type="button">تحميل Excel</button>
+        <div class="count-chip" id="userCount">0</div>
+      </div>
+    </div>
+    <div class="table-wrap matrix-wrap">
+      <table class="matrix" id="matrixTable">
+        <thead id="matrixHead"></thead>
+        <tbody id="userBody"></tbody>
+        <tfoot id="matrixFoot"></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    تم التصميم بواسطة إبراهيم عفيفي
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
