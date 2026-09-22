@@ -234,7 +234,7 @@ select, input { background: #fff; width: 100%; font-weight: 600; }
   text-align: right;
 }
 .matrix th.sticky { z-index: 4; background: var(--yellow); }
-.matrix .user-col { min-width: 190px; right: 36px; }
+.matrix .user-col { min-width: 230px; max-width: 260px; right: 36px; }
 .matrix th.user-col { right: 36px; }
 .matrix td.sticky:first-child, .matrix th.sticky:first-child { min-width: 36px; width: 36px; }
 .matrix tfoot td { background: #111; color: #fff; font-weight: 800; position: sticky; bottom: 0; }
@@ -252,8 +252,8 @@ tbody tr.selected td { background: #fff3a3; }
 .cell-qty { font-weight: 800; font-size: 16px; line-height: 1.1; }
 .cell-sku { font-size: 10px; color: var(--muted); font-weight: 700; }
 .total-col { background: #f6f4ea !important; font-weight: 800; }
-.user-id { font-weight: 800; }
-.user-mail { color: var(--muted); font-size: 11px; }
+.user-id { font-weight: 800; white-space: normal; line-height: 1.2; }
+.user-mail { color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
 .strong { font-weight: 800; font-size: 16px; }
 .spark {
   display: flex;

@@ -190,13 +190,14 @@ function visibleUsers() {
   if (q) {
     rows = rows.filter((u) =>
       (u.username || "").toLowerCase().includes(q) ||
-      (u.name || "").toLowerCase().includes(q)
+      (u.name || "").toLowerCase().includes(q) ||
+      (u.displayName || "").toLowerCase().includes(q)
     );
   }
 
   rows.sort((a, b) => {
     if (state.sort === "skus") return b.stats.uniqueSkus - a.stats.uniqueSkus;
-    if (state.sort === "name") return (a.name || "").localeCompare(b.name || "");
+    if (state.sort === "name") return (a.displayName || a.name || "").localeCompare(b.displayName || b.name || "");
     return b.stats.qty - a.stats.qty;
   });
   return rows;
@@ -278,7 +279,7 @@ function renderTable(rows) {
 
   els.matrixHead.innerHTML = `<tr>
     <th class="sticky">#</th>
-    <th class="sticky user-col">اليوزر</th>
+    <th class="sticky user-col">الاسم</th>
     ${hours.map((h) => `<th class="${state.selectedHour === h ? "picked" : ""}" data-hour="${h}">${hourLabel(h)}</th>`).join("")}
     <th class="total-col">الإجمالي</th>
   </tr>`;
@@ -287,7 +288,7 @@ function renderTable(rows) {
     <tr data-user="${u.username}" class="${u.username === state.selectedUser ? "selected" : ""}">
       <td class="sticky">${i + 1}</td>
       <td class="sticky user-col">
-        <div class="user-id">${u.name}</div>
+        <div class="user-id">${u.displayName || u.name}</div>
         <div class="user-mail">${u.username}</div>
       </td>
       ${hours.map((h) => {
@@ -332,12 +333,12 @@ function exportExcel() {
   if (!state.data) return;
   const rows = visibleUsers();
   const hours = activeHours(rows);
-  const head = ["#", "اليوزر", "الإيميل"]
+  const head = ["#", "الاسم", "اليوزر"]
     .concat(hours.flatMap((h) => [`${hourLabel(h)} كمية`, `${hourLabel(h)} SKU`]))
     .concat(["الإجمالي كمية", "الإجمالي SKU"]);
 
   const body = rows.map((u, i) => {
-    const cells = [i + 1, u.name, u.username];
+    const cells = [i + 1, u.displayName || u.name, u.username];
     hours.forEach((h) => {
       cells.push(u.stats.hoursQty[h] || 0);
       cells.push(u.stats.hoursSku[h] || 0);

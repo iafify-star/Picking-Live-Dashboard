@@ -6,6 +6,9 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Port = 5500
 $CacheFile = Join-Path $Root "cache\data.json"
 $RefreshScript = Join-Path $Root "refresh-data.ps1"
+$NamesScript = Join-Path $Root "refresh-names.ps1"
+$NamesFile = Join-Path $Root "cache\names.json"
+$NamesRefreshSeconds = 1800
 
 function Get-MimeType([string]$Path) {
     switch ([IO.Path]::GetExtension($Path).ToLowerInvariant()) {
@@ -43,6 +46,15 @@ function Start-Refresh {
     )
 }
 
+function Start-NamesRefresh {
+    $running = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine -like "*refresh-names.ps1*" }
+    if ($running) { return }
+    Start-Process -FilePath "powershell.exe" -WindowStyle Hidden -ArgumentList @(
+        "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $NamesScript
+    )
+}
+
 $listener = New-Object System.Net.HttpListener
 $prefix = "http://127.0.0.1:$Port/"
 $listener.Prefixes.Add($prefix)
@@ -60,8 +72,10 @@ Write-Host "Ctrl+C to stop"
 Write-Host ""
 
 Start-Refresh
+if (-not (Test-Path $NamesFile)) { Start-NamesRefresh }
 Start-Process $prefix
 $lastKick = Get-Date
+$lastNamesKick = Get-Date
 
 while ($listener.IsListening) {
     $ctx = $null
@@ -71,6 +85,10 @@ while ($listener.IsListening) {
             if (((Get-Date) - $lastKick).TotalSeconds -ge 50) {
                 Start-Refresh
                 $lastKick = Get-Date
+            }
+            if (((Get-Date) - $lastNamesKick).TotalSeconds -ge $NamesRefreshSeconds) {
+                Start-NamesRefresh
+                $lastNamesKick = Get-Date
             }
             Start-Sleep -Milliseconds 200
         }
