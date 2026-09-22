@@ -47,8 +47,9 @@ function fmt(n) {
 }
 
 function dayLabel(iso) {
-  const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  const [y, m, d] = iso.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" });
 }
 
 function hourLabel(h) {
@@ -62,7 +63,7 @@ function selectedDays() {
 
 function rangeLabel() {
   const days = selectedDays();
-  if (!days.length) return "لا يوجد تاريخ";
+  if (!days.length) return "No date selected";
   if (days.length === 1) return dayLabel(days[0]);
   return `${dayLabel(days[0])} → ${dayLabel(days[days.length - 1])}`;
 }
@@ -122,11 +123,11 @@ async function loadData(fresh) {
     const data = await res.json();
     if (data.loading) {
       els.liveText.textContent = "SYNC";
-      els.metaLine.textContent = "بيسحب السحبة من الشيت... استنى لحظة";
+      els.metaLine.textContent = "Fetching the latest pull from the sheet...";
       state.left = 3;
       return;
     }
-    if (!data.ok) throw new Error(data.error || "فشل السحب");
+    if (!data.ok) throw new Error(data.error || "Failed to fetch data");
     data.users = toArray(data.users);
     data.days = toArray(data.days);
     state.data = data;
@@ -142,14 +143,14 @@ async function loadData(fresh) {
     els.dateTo.value = state.to;
     render();
     const when = new Date(data.fetchedAt);
-    els.metaLine.textContent = `آخر سحب: ${when.toLocaleTimeString("ar-EG")} · ${fmt(data.totalPicks)} كمية · ${fmt(data.uniqueSkus)} SKU`;
+    els.metaLine.textContent = `Last sync: ${when.toLocaleTimeString("en-US")} · ${fmt(data.totalPicks)} qty · ${fmt(data.uniqueSkus)} SKU`;
     els.livePill.classList.remove("err");
     els.liveText.textContent = "LIVE";
     state.left = REFRESH_SEC;
   } catch (err) {
     els.livePill.classList.add("err");
     els.liveText.textContent = "OFF";
-    els.metaLine.textContent = "مش قادر أقرأ الشيت: " + err.message;
+    els.metaLine.textContent = "Could not read the sheet: " + err.message;
   } finally {
     els.refreshBtn.disabled = false;
   }
@@ -224,10 +225,10 @@ function renderKpis(rows) {
   const hourQty = rows.reduce((s, u) => s + (u.stats.hoursQty[lastHour] || 0), 0);
   const hourSku = rows.reduce((s, u) => s + (u.stats.hoursSku[lastHour] || 0), 0);
   const cards = [
-    ["الكمية في الفترة", fmt(qty), true],
-    ["عدد SKU", fmt(sku), false],
-    ["بيكرز شغالين", fmt(rows.length), false],
-    [`آخر ساعة ${hourLabel(lastHour)}`, `${fmt(hourSku)} SKU · ${fmt(hourQty)} كمية`, false],
+    ["Quantity in range", fmt(qty), true],
+    ["SKU count", fmt(sku), false],
+    ["Active pickers", fmt(rows.length), false],
+    [`Last hour ${hourLabel(lastHour)}`, `${fmt(hourSku)} SKU · ${fmt(hourQty)} qty`, false],
   ];
   els.kpis.innerHTML = cards.map(([label, value, gold]) => `
     <article class="kpi ${gold ? "gold" : ""}">
@@ -279,9 +280,9 @@ function renderTable(rows) {
 
   els.matrixHead.innerHTML = `<tr>
     <th class="sticky">#</th>
-    <th class="sticky user-col">الاسم</th>
+    <th class="sticky user-col">Name</th>
     ${hours.map((h) => `<th class="${state.selectedHour === h ? "picked" : ""}" data-hour="${h}">${hourLabel(h)}</th>`).join("")}
-    <th class="total-col">الإجمالي</th>
+    <th class="total-col">Total</th>
   </tr>`;
 
   els.userBody.innerHTML = rows.map((u, i) => `
@@ -303,13 +304,13 @@ function renderTable(rows) {
         <div class="cell-sku">${fmt(u.stats.uniqueSkus)} SKU</div>
       </td>
     </tr>
-  `).join("") || `<tr><td colspan="${hours.length + 3}">مفيش بيك في التاريخ ده</td></tr>`;
+  `).join("") || `<tr><td colspan="${hours.length + 3}">No picks in this date range</td></tr>`;
 
   const sumQty = rows.reduce((s, u) => s + u.stats.qty, 0);
   const sumSku = rows.reduce((s, u) => s + u.stats.uniqueSkus, 0);
   els.matrixFoot.innerHTML = `<tr>
     <td class="sticky"></td>
-    <td class="sticky user-col">إجمالي الساعة</td>
+    <td class="sticky user-col">Hourly total</td>
     ${hours.map((h) => `<td class="${state.selectedHour === h ? "picked" : ""}" data-hour="${h}">
       <div class="cell-qty">${totalsQty[h] ? fmt(totalsQty[h]) : "—"}</div>
       <div class="cell-sku">${totalsSku[h] ? fmt(totalsSku[h]) + " SKU" : ""}</div>
@@ -333,9 +334,9 @@ function exportExcel() {
   if (!state.data) return;
   const rows = visibleUsers();
   const hours = activeHours(rows);
-  const head = ["#", "الاسم", "اليوزر"]
-    .concat(hours.flatMap((h) => [`${hourLabel(h)} كمية`, `${hourLabel(h)} SKU`]))
-    .concat(["الإجمالي كمية", "الإجمالي SKU"]);
+  const head = ["#", "Name", "Username"]
+    .concat(hours.flatMap((h) => [`${hourLabel(h)} qty`, `${hourLabel(h)} SKU`]))
+    .concat(["Total qty", "Total SKU"]);
 
   const body = rows.map((u, i) => {
     const cells = [i + 1, u.displayName || u.name, u.username];
@@ -348,7 +349,7 @@ function exportExcel() {
     return cells;
   });
 
-  const totals = ["", "إجمالي الساعة", ""];
+  const totals = ["", "Hourly total", ""];
   hours.forEach((h) => {
     totals.push(rows.reduce((s, u) => s + (u.stats.hoursQty[h] || 0), 0));
     totals.push(rows.reduce((s, u) => s + (u.stats.hoursSku[h] || 0), 0));
@@ -362,7 +363,7 @@ function exportExcel() {
 
   const html = `<html><head><meta charset="UTF-8"></head><body>
     <table border="1">${tableRows}</table>
-    <p>تم التصميم بواسطة إبراهيم عفيفي</p>
+    <p>Designed by Ibrahim Afify</p>
   </body></html>`;
 
   const blob = new Blob(["\uFEFF" + html], { type: "application/vnd.ms-excel;charset=utf-8;" });
@@ -434,7 +435,7 @@ setInterval(() => {
   if (state.left <= 0) {
     loadData(true);
   } else {
-    els.countdown.textContent = `تحديث بعد ${state.left}ث`;
+    els.countdown.textContent = `Refreshing in ${state.left}s`;
   }
 }, 1000);
 

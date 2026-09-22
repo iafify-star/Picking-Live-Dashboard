@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +10,10 @@
   <div class="bg"></div>
   <header class="top">
     <div class="brand">
-      <div class="logo-box">
-        <img src="assets/noon-logo.svg" alt="noon" class="noon-mark" />
-        <span class="minutes">minutes</span>
-      </div>
+      <img src="assets/noon-minutes-logo.png" alt="noon minutes" class="logo-img" />
       <div class="brand-copy">
         <h1>Picking Live Dashboard</h1>
-        <p>كل يوزر · كل ساعة · كمية وSKU</p>
+        <p>Every user · every hour · quantity and SKU count</p>
       </div>
     </div>
     <div class="live-wrap">
@@ -24,34 +21,34 @@
         <span class="dot"></span>
         <span id="liveText">LIVE</span>
       </div>
-      <div class="meta" id="metaLine">جاري السحب من الشيت...</div>
-      <button id="refreshBtn" type="button">تحديث الآن</button>
+      <div class="meta" id="metaLine">Fetching data from the sheet...</div>
+      <button id="refreshBtn" type="button">Refresh now</button>
     </div>
   </header>
 
   <section class="toolbar">
     <label class="field">
-      <span>من تاريخ</span>
+      <span>From date</span>
       <input id="dateFrom" type="date" />
     </label>
     <label class="field">
-      <span>إلى تاريخ</span>
+      <span>To date</span>
       <input id="dateTo" type="date" />
     </label>
-    <button id="allDaysBtn" class="ghost" type="button">كل التواريخ</button>
+    <button id="allDaysBtn" class="ghost" type="button">All dates</button>
     <label class="field grow">
-      <span>بحث يوزر</span>
-      <input id="searchInput" type="search" placeholder="اكتب اليوزر نيم..." />
+      <span>Search user</span>
+      <input id="searchInput" type="search" placeholder="Type a username or name..." />
     </label>
     <label class="field">
-      <span>الترتيب</span>
+      <span>Sort by</span>
       <select id="sortSelect">
-        <option value="qty">الأعلى كمية</option>
-        <option value="skus">الأعلى SKU</option>
-        <option value="name">الاسم</option>
+        <option value="qty">Highest quantity</option>
+        <option value="skus">Highest SKU count</option>
+        <option value="name">Name</option>
       </select>
     </label>
-    <div class="countdown" id="countdown">تحديث بعد 60ث</div>
+    <div class="countdown" id="countdown">Refreshing in 60s</div>
   </section>
   <div class="day-chips" id="dayChips"></div>
 
@@ -60,10 +57,10 @@
   <section class="panel matrix-panel">
     <div class="panel-head">
       <div>
-        <h2>إنتاجية كل يوزر كل ساعة</h2>
+        <h2>Hourly Productivity per User</h2>
       </div>
       <div class="head-actions">
-        <button id="exportBtn" type="button">تحميل Excel</button>
+        <button id="exportBtn" type="button">Download Excel</button>
         <div class="count-chip" id="userCount">0</div>
       </div>
     </div>
@@ -77,7 +74,7 @@
   </section>
 
   <footer>
-    تم التصميم بواسطة إبراهيم عفيفي
+    Designed by Ibrahim Afify
   </footer>
 
   <script src="app.js"></script>

@@ -37,26 +37,17 @@ body {
 }
 
 .brand { display: flex; align-items: center; gap: 18px; }
-.logo-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--yellow);
-  border-radius: 18px;
-  padding: 10px 16px 8px;
+.logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
+  border-radius: 14px;
   box-shadow: var(--shadow);
-}
-.noon-mark { height: 34px; width: auto; color: #111; display: block; }
-.minutes {
-  font-weight: 800;
-  font-size: 26px;
-  letter-spacing: -0.6px;
-  margin-top: 8px;
 }
 .brand-copy h1 { margin: 0; font-size: 22px; }
 .brand-copy p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
 
-.live-wrap { text-align: left; }
+.live-wrap { text-align: right; }
 .live-pill {
   display: inline-flex;
   align-items: center;
@@ -103,7 +94,7 @@ body {
 .field span { font-size: 12px; color: var(--muted); font-weight: 700; }
 .field.grow { flex: 1; min-width: 240px; }
 select, input { background: #fff; width: 100%; font-weight: 600; }
-.countdown { margin-right: auto; color: var(--muted); font-size: 12px; padding-bottom: 8px; }
+.countdown { margin-left: auto; color: var(--muted); font-size: 12px; padding-bottom: 8px; }
 .day-chips {
   display: flex;
   gap: 8px;
@@ -228,14 +219,14 @@ select, input { background: #fff; width: 100%; font-weight: 600; }
 }
 .matrix .sticky {
   position: sticky;
-  right: 0;
+  left: 0;
   z-index: 2;
   background: #fff;
-  text-align: right;
+  text-align: left;
 }
 .matrix th.sticky { z-index: 4; background: var(--yellow); }
-.matrix .user-col { min-width: 230px; max-width: 260px; right: 36px; }
-.matrix th.user-col { right: 36px; }
+.matrix .user-col { min-width: 230px; max-width: 260px; left: 36px; }
+.matrix th.user-col { left: 36px; }
 .matrix td.sticky:first-child, .matrix th.sticky:first-child { min-width: 36px; width: 36px; }
 .matrix tfoot td { background: #111; color: #fff; font-weight: 800; position: sticky; bottom: 0; }
 .matrix tfoot .sticky { background: #111; color: #fff; }
