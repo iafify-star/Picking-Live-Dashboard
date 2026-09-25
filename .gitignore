@@ -1,5 +1,36 @@
+
+# Auto-generated cache (pulled from Google Sheets at runtime)
 cache/
+
+# CSV snapshots
 *.csv
+
+# Logs
 *.log
+npm-debug.log*
+
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Node dependencies
+node_modules/
+
+# Vercel build output
+.vercel/
+.output/
+
+# OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Nested / cloned repo
+Picking-Live-Dashboard/

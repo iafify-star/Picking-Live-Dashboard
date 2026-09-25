@@ -1,0 +1,15 @@
+{
+  "name": "picking-live-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-time picking productivity dashboard for noon minutes",
+  "author": "Ibrahim Afify",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "start": "powershell -ExecutionPolicy Bypass -File server.ps1"
+  }
+}

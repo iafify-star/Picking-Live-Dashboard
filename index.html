@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>noon minutes · Picking Live</title>
+  <link rel="icon" type="image/png" href="assets/noon-minutes-logo.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,44 +13,52 @@
     <div class="brand">
       <img src="assets/noon-minutes-logo.png" alt="noon minutes" class="logo-img" />
       <div class="brand-copy">
-        <h1>Picking Live Dashboard</h1>
-        <p>Every user · every hour · quantity and SKU count</p>
+        <h1 data-i18n="brand.title">Picking Live Dashboard</h1>
+        <p data-i18n="brand.subtitle">Every user · every hour · <b>Qty</b> = units picked · <b>SKU</b> = distinct products picked</p>
       </div>
     </div>
     <div class="live-wrap">
       <div class="live-pill" id="livePill">
         <span class="dot"></span>
-        <span id="liveText">LIVE</span>
+        <span id="liveText" data-state="live">LIVE</span>
       </div>
       <div class="meta" id="metaLine">Fetching data from the sheet...</div>
-      <button id="refreshBtn" type="button">Refresh now</button>
+      <div class="top-actions">
+        <button id="langBtn" type="button" class="lang-btn">🌐 AR</button>
+        <button id="refreshBtn" type="button" data-i18n="btn.refresh">Refresh now</button>
+      </div>
     </div>
   </header>
 
   <section class="toolbar">
     <label class="field">
-      <span>From date</span>
+      <span data-i18n="label.fromDate">From date</span>
       <input id="dateFrom" type="date" />
     </label>
     <label class="field">
-      <span>To date</span>
+      <span data-i18n="label.toDate">To date</span>
       <input id="dateTo" type="date" />
     </label>
-    <button id="allDaysBtn" class="ghost" type="button">All dates</button>
+    <button id="allDaysBtn" class="ghost" type="button" data-i18n="btn.allDays">All dates</button>
     <label class="field grow">
-      <span>Search user</span>
+      <span data-i18n="label.search">Search user</span>
       <input id="searchInput" type="search" placeholder="Type a username or name..." />
     </label>
     <label class="field">
-      <span>Sort by</span>
+      <span data-i18n="label.sortBy">Sort by</span>
       <select id="sortSelect">
-        <option value="qty">Highest quantity</option>
-        <option value="skus">Highest SKU count</option>
-        <option value="name">Name</option>
+        <option value="qty"  data-i18n="sort.qty">Highest quantity</option>
+        <option value="skus" data-i18n="sort.skus">Highest SKU count</option>
+        <option value="name" data-i18n="sort.name">Name</option>
       </select>
     </label>
     <div class="countdown" id="countdown">Refreshing in 60s</div>
   </section>
+
+  <p class="toolbar-hint" data-i18n="hint.toolbar">
+    Pick a date range (or tap a day below), search for a user, then read the table: each hour column shows
+    what was picked that hour. Data pulls live from the picking sheet — throw a new pull and it shows up here.
+  </p>
   <div class="day-chips" id="dayChips"></div>
 
   <section class="kpis" id="kpis"></section>
@@ -57,13 +66,33 @@
   <section class="panel matrix-panel">
     <div class="panel-head">
       <div>
-        <h2>Hourly Productivity per User</h2>
+        <h2 data-i18n="panel.title">Hourly Productivity per User</h2>
+        <p data-i18n="panel.subtitle">One row per picker · one column per hour · sticky columns stay visible while you scroll</p>
       </div>
       <div class="head-actions">
-        <button id="exportBtn" type="button">Download Excel</button>
+        <button id="exportBtn" type="button" data-i18n="btn.export">Download Excel</button>
         <div class="count-chip" id="userCount">0</div>
       </div>
     </div>
+
+    <div class="legend">
+      <span class="legend-item">
+        <span class="legend-num qty">e.g. 120</span>
+        <span data-i18n="legend.qty">Bold number = <b>quantity</b> (units picked)</span>
+      </span>
+      <span class="legend-item">
+        <span class="legend-num sku">e.g. 40 SKU</span>
+        <span data-i18n="legend.sku">Small number = <b>distinct SKUs</b> (not units)</span>
+      </span>
+      <span class="legend-item legend-scale">
+        <i class="swatch empty"></i> <span data-i18n="legend.empty">No picks</span>
+        <i class="swatch low"></i>   <span data-i18n="legend.low">Low</span>
+        <i class="swatch mid"></i>   <span data-i18n="legend.mid">Medium</span>
+        <i class="swatch hot"></i>   <span data-i18n="legend.hot">Busiest hour</span>
+      </span>
+      <span class="legend-item" data-i18n="legend.click">Click an hour header or a row to highlight it</span>
+    </div>
+
     <div class="table-wrap matrix-wrap">
       <table class="matrix" id="matrixTable">
         <thead id="matrixHead"></thead>
@@ -74,7 +103,7 @@
   </section>
 
   <footer>
-    Designed by Ibrahim Afify
+    <span data-i18n="footer">Designed by Ibrahim Afify</span>
   </footer>
 
   <script src="app.js"></script>
