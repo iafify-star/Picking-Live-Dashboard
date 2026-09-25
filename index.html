@@ -77,58 +77,70 @@
 
   <!-- Toolbar Filters -->
   <section class="toolbar">
-    <label class="field">
-      <span data-i18n="label.fromDate">From date</span>
-      <input id="dateFrom" type="date" />
-    </label>
-    <label class="field">
-      <span data-i18n="label.toDate">To date</span>
-      <input id="dateTo" type="date" />
-    </label>
-    <button id="allDaysBtn" class="ghost" type="button" data-i18n="btn.allDays">All dates</button>
+    <div class="toolbar-group filter-dates">
+      <label class="field">
+        <span data-i18n="label.fromDate">From date</span>
+        <input id="dateFrom" type="date" />
+      </label>
+      <label class="field">
+        <span data-i18n="label.toDate">To date</span>
+        <input id="dateTo" type="date" />
+      </label>
+      <button id="allDaysBtn" class="ghost action-pill-btn" type="button" data-i18n="btn.allDays">All dates</button>
+    </div>
 
-    <label class="field hour-field">
-      <span data-i18n="label.fromHour">From hour</span>
-      <select id="hourFrom"></select>
-    </label>
-    <label class="field hour-field">
-      <span data-i18n="label.toHour">To hour</span>
-      <select id="hourTo"></select>
-    </label>
-    <button id="allHoursBtn" class="ghost" type="button" data-i18n="btn.allHours">All hours</button>
+    <div class="toolbar-group filter-hours">
+      <label class="field hour-field">
+        <span data-i18n="label.fromHour">From hour</span>
+        <select id="hourFrom"></select>
+      </label>
+      <label class="field hour-field">
+        <span data-i18n="label.toHour">To hour</span>
+        <select id="hourTo"></select>
+      </label>
+      <button id="allHoursBtn" class="ghost action-pill-btn" type="button" data-i18n="btn.allHours">All hours</button>
+    </div>
 
-    <label class="field hub-field">
-      <span data-i18n="label.hub">Hub / Team</span>
-      <select id="hubSelect">
-        <option value="" data-i18n="hub.all">All Hubs</option>
-      </select>
-    </label>
+    <div class="toolbar-group filter-dropdowns">
+      <label class="field hub-field">
+        <span data-i18n="label.hub">Hub / Team</span>
+        <select id="hubSelect">
+          <option value="" data-i18n="hub.all">All Hubs</option>
+        </select>
+      </label>
 
-    <label class="field picktype-field">
-      <span data-i18n="label.pickType">Picking Type</span>
-      <select id="pickTypeSelect">
-        <option value="" data-i18n="pickType.all">All Types</option>
-      </select>
-    </label>
+      <label class="field picktype-field">
+        <span data-i18n="label.pickType">Picking Type</span>
+        <select id="pickTypeSelect">
+          <option value="" data-i18n="pickType.all">All Types</option>
+        </select>
+      </label>
+    </div>
 
-    <label class="field grow">
-      <span data-i18n="label.search">Search user</span>
-      <input id="searchInput" type="search" placeholder="Type a username or name..." />
-    </label>
+    <div class="toolbar-group filter-search">
+      <label class="field grow">
+        <span data-i18n="label.search">Search user</span>
+        <input id="searchInput" type="search" placeholder="Type a username or name..." />
+      </label>
+    </div>
 
-    <label class="field">
-      <span data-i18n="label.sortBy">Sort by</span>
-      <select id="sortSelect">
-        <option value="qty"  data-i18n="sort.qty">Highest quantity</option>
-        <option value="uph"  data-i18n="sort.uph">Highest UPH (Speed)</option>
-        <option value="skus" data-i18n="sort.skus">Highest SKU count</option>
-        <option value="name" data-i18n="sort.name">Name</option>
-      </select>
-    </label>
+    <div class="toolbar-group filter-sort-idle">
+      <label class="field sort-field">
+        <span data-i18n="label.sortBy">Sort by</span>
+        <select id="sortSelect">
+          <option value="qty"  data-i18n="sort.qty">Highest quantity</option>
+          <option value="uph"  data-i18n="sort.uph">Highest UPH (Speed)</option>
+          <option value="skus" data-i18n="sort.skus">Highest SKU count</option>
+          <option value="name" data-i18n="sort.name">Name</option>
+        </select>
+      </label>
+      <button id="idleToggleBtn" class="ghost idle-btn" type="button" data-i18n="btn.idleOnly">⚠️ Idle Only</button>
+    </div>
 
-    <button id="idleToggleBtn" class="ghost idle-btn" type="button" data-i18n="btn.idleOnly">⚠️ Idle Only</button>
-    <button id="resetFiltersBtn" class="reset-filters-btn" type="button" data-i18n="btn.resetAll">🔄 Clear All Filters</button>
-    <div class="countdown" id="countdown">Refreshing in 60s</div>
+    <div class="toolbar-group filter-actions">
+      <button id="resetFiltersBtn" class="reset-filters-btn" type="button" data-i18n="btn.resetAll">🔄 Clear All Filters</button>
+      <div class="countdown" id="countdown">Refreshing in 60s</div>
+    </div>
   </section>
 
   <p class="toolbar-hint" data-i18n="hint.toolbar">
@@ -170,6 +182,10 @@
         <i class="swatch hot"></i>   <span data-i18n="legend.hot">Busiest hour</span>
       </span>
       <span class="legend-item" data-i18n="legend.click">Click an hour header or a row to highlight it</span>
+    </div>
+
+    <div class="mobile-scroll-hint" data-i18n="table.scrollHint">
+      <span>👉 Swipe table horizontally to see all hours ➔</span>
     </div>
 
     <div class="table-wrap matrix-wrap">
