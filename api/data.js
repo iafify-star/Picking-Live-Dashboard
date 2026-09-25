@@ -2,6 +2,9 @@
 // Pulls the live picking sheet + the HR attendance sheet (for real names),
 // aggregates per user / per day / per hour, and returns JSON for the dashboard.
 
+const fs = require("fs");
+const path = require("path");
+
 const PICK_SHEET_ID = "1l6EwjL3i0eNy3mdYlcUcOF8un1-31ycKJEL5cuZ9MkQ";
 const PICK_GID = "841809744";
 const PICK_URL = `https://docs.google.com/spreadsheets/d/${PICK_SHEET_ID}/export?format=csv&gid=${PICK_GID}`;
@@ -112,8 +115,7 @@ function parsePickedAt(value) {
   const date =
     String(year).padStart(4, "0") + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
   return { date, hour };
-const fs = require("fs");
-const path = require("path");
+}
 
 function getStaticNamesMap() {
   try {

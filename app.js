@@ -532,8 +532,14 @@ async function loadData(fresh) {
   setLiveState("sync");
   els.refreshBtn.disabled = true;
   try {
-    const res  = await fetch("/api/data" + (fresh ? "?fresh=1" : ""), { cache: "no-store" });
-    const data = await res.json();
+    const res = await fetch("/api/data" + (fresh ? "?fresh=1" : ""), { cache: "no-store" });
+    const rawText = await res.text();
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (_) {
+      throw new Error(res.ok ? "Server returned invalid data format" : `Server error (${res.status})`);
+    }
     if (data.loading) {
       setLiveState("sync");
       setMeta("meta.syncing");
