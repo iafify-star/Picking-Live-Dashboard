@@ -26,6 +26,7 @@ const TRANSLATIONS = {
     'label.hub'         : 'Hub / Team',
     'hub.all'           : 'All Hubs',
     'btn.idleOnly'      : '⚠️ Idle Only',
+    'btn.resetAll'      : '🔄 Clear All Filters',
     'label.search'      : 'Search user',
     'search.placeholder': 'Type a username or name...',
     'label.sortBy'      : 'Sort by',
@@ -109,6 +110,7 @@ const TRANSLATIONS = {
     'label.hub'         : 'الفرع / الفريق',
     'hub.all'           : 'كل الفروع',
     'btn.idleOnly'      : '⚠️ المتوقفين فقط',
+    'btn.resetAll'      : '🔄 إلغاء كل الفلاتر',
     'label.search'      : 'بحث عن مستخدم',
     'search.placeholder': 'اكتب اسم المستخدم أو الاسم...',
     'label.sortBy'      : 'ترتيب حسب',
@@ -201,6 +203,7 @@ const els = {
   searchInput       : document.getElementById("searchInput"),
   sortSelect        : document.getElementById("sortSelect"),
   idleToggleBtn     : document.getElementById("idleToggleBtn"),
+  resetFiltersBtn   : document.getElementById("resetFiltersBtn"),
   countdown         : document.getElementById("countdown"),
   kpis              : document.getElementById("kpis"),
   exportBtn         : document.getElementById("exportBtn"),
@@ -932,6 +935,39 @@ if (els.idleToggleBtn) {
   els.idleToggleBtn.addEventListener("click", () => {
     state.idleOnly = !state.idleOnly;
     els.idleToggleBtn.classList.toggle("active", state.idleOnly);
+    render();
+  });
+}
+
+if (els.resetFiltersBtn) {
+  els.resetFiltersBtn.addEventListener("click", () => {
+    state.search = "";
+    if (els.searchInput) els.searchInput.value = "";
+
+    state.hub = "";
+    if (els.hubSelect) els.hubSelect.value = "";
+
+    state.hourFrom = "";
+    state.hourTo = "";
+    if (els.hourFrom) els.hourFrom.value = "";
+    if (els.hourTo) els.hourTo.value = "";
+
+    state.idleOnly = false;
+    if (els.idleToggleBtn) els.idleToggleBtn.classList.remove("active");
+
+    state.sort = "qty";
+    if (els.sortSelect) els.sortSelect.value = "qty";
+
+    state.selectedHour = null;
+    state.selectedUser = "";
+
+    if (state.data && state.data.days && state.data.days.length) {
+      state.from = state.data.days[0];
+      state.to = state.data.days[state.data.days.length - 1];
+      if (els.dateFrom) els.dateFrom.value = state.from;
+      if (els.dateTo) els.dateTo.value = state.to;
+    }
+
     render();
   });
 }
