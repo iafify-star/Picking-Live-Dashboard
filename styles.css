@@ -4,10 +4,30 @@
   --ink: #111111;
   --paper: #f6f4ea;
   --card: #ffffff;
+  --card-border: #ece7d4;
+  --card-hover: #fffdf5;
   --muted: #6b6758;
   --line: #ece7d4;
   --good: #12a150;
+  --warning: #d97706;
+  --danger: #dc2626;
   --shadow: 0 12px 40px rgba(17, 17, 17, 0.08);
+}
+
+[data-theme="dark"] {
+  --yellow: #ffd000;
+  --yellow-2: #ffdc33;
+  --ink: #f1f5f9;
+  --paper: #090d16;
+  --card: #131b2e;
+  --card-border: #1e293b;
+  --card-hover: #1a253f;
+  --muted: #94a3b8;
+  --line: #1e293b;
+  --good: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
 * { box-sizing: border-box; }
@@ -17,6 +37,88 @@ body {
   background: var(--paper);
   color: var(--ink);
   min-height: 100vh;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+[data-theme="dark"] .bg {
+  background:
+    radial-gradient(900px 400px at 100% -10%, rgba(255, 208, 0, 0.12), transparent 60%),
+    radial-gradient(700px 300px at 0% 0%, rgba(30, 41, 59, 0.5), transparent 55%);
+}
+
+[data-theme="dark"] .panel,
+[data-theme="dark"] .kpi,
+[data-theme="dark"] .target-panel,
+[data-theme="dark"] .podium-card {
+  background: var(--card);
+  border-color: var(--card-border);
+}
+
+[data-theme="dark"] select,
+[data-theme="dark"] input {
+  background: #1a233a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .ghost,
+[data-theme="dark"] .chip {
+  background: #1a233a;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .chip.on {
+  background: var(--yellow);
+  color: #111;
+  border-color: var(--yellow);
+}
+
+[data-theme="dark"] .matrix {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .matrix td {
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .matrix td.sticky {
+  background: #131b2e;
+}
+
+[data-theme="dark"] tbody tr:hover td {
+  background: #1e293b;
+}
+
+[data-theme="dark"] tbody tr.selected td {
+  background: #28354f;
+}
+
+[data-theme="dark"] .total-col {
+  background: #0f172a !important;
+}
+
+[data-theme="dark"] .matrix td.cell.empty {
+  color: #475569;
+}
+
+[data-theme="dark"] .matrix td.cell.low {
+  background: #1e2c1a;
+  color: #86efac;
+}
+
+[data-theme="dark"] .matrix td.cell.mid {
+  background: #2a3d16;
+  color: #bbf7d0;
+}
+
+[data-theme="dark"] .matrix td.cell.hot {
+  background: var(--yellow);
+  color: #111;
+}
+
+[data-theme="dark"] .matrix td.cell.hot .cell-sku {
+  color: #333;
 }
 
 .bg {
@@ -369,17 +471,377 @@ footer {
   gap: 8px;
   justify-content: flex-end;
   margin-top: 8px;
+  align-items: center;
+}
+
+.icon-btn {
+  border: 1px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ── Shift Target Panel ──────────────────────────────────────── */
+.target-panel {
+  margin: 4px 28px 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+}
+.target-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.target-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.target-icon {
+  font-size: 26px;
+}
+.target-title-wrap h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+.target-title-wrap p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.target-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.target-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.target-input-label input {
+  width: 100px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.target-badge {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--yellow);
+}
+.target-badge.crushed {
+  background: #15803d;
+  color: #fff;
+}
+.target-badge.on-track {
+  background: #b45309;
+  color: #fff;
+}
+.progress-bar-wrap {
+  margin-top: 12px;
+  height: 12px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--yellow), #10b981);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.target-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Top 3 Podium & Stars ────────────────────────────────────── */
+.podium-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 0 28px 16px;
+}
+.podium-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.podium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+}
+.podium-card.rank-1 {
+  border: 2px solid #eab308;
+  background: linear-gradient(180deg, rgba(234, 179, 8, 0.08) 0%, var(--card) 100%);
+}
+.podium-card.rank-2 {
+  border: 2px solid #94a3b8;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.08) 0%, var(--card) 100%);
+}
+.podium-card.rank-3 {
+  border: 2px solid #b45309;
+  background: linear-gradient(180deg, rgba(180, 83, 9, 0.08) 0%, var(--card) 100%);
+}
+.podium-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.podium-rank-badge {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.podium-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  text-transform: uppercase;
+}
+.podium-user {
+  display: flex;
+  flex-direction: column;
+}
+.podium-name {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.podium-mail {
+  font-size: 11px;
+  color: var(--muted);
+}
+.podium-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+}
+[data-theme="dark"] .podium-metrics {
+  background: #1a233a;
+}
+.podium-metric-val {
+  font-size: 14px;
+  font-weight: 800;
+}
+.podium-metric-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+/* ── Hourly Trend Chart ──────────────────────────────────────── */
+.chart-panel {
+  margin: 0 28px 16px;
+}
+.peak-badge {
+  font-size: 12px;
+  font-weight: 800;
+  background: #ef4444;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.chart-container {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  height: 140px;
+  padding: 16px 8px 4px;
+  overflow-x: auto;
+}
+.chart-col {
+  flex: 1;
+  min-width: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+  cursor: pointer;
+}
+.chart-col:hover .chart-bar {
+  opacity: 0.85;
+  transform: scaleY(1.03);
+}
+.chart-val {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chart-bar {
+  width: 100%;
+  max-width: 48px;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--yellow);
+  border: 1px solid var(--ink);
+  transition: height 0.4s ease, transform 0.15s ease;
+  min-height: 4px;
+}
+.chart-bar.peak {
+  background: #ef4444;
+  border-color: #991b1b;
+}
+.chart-bar.selected {
+  outline: 3px solid #3b82f6;
+}
+.chart-hour {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── UPH & Idle Badges ───────────────────────────────────────── */
+.uph-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.uph-fast {
+  background: #dcfce7;
+  color: #15803d;
+}
+.uph-mid {
+  background: #fef9c3;
+  color: #854d0e;
+}
+.uph-low {
+  background: #f1f5f9;
+  color: #64748b;
+}
+[data-theme="dark"] .uph-fast { background: #14532d; color: #86efac; }
+[data-theme="dark"] .uph-mid  { background: #713f12; color: #fef08a; }
+[data-theme="dark"] .uph-low  { background: #334155; color: #cbd5e1; }
+
+.idle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 10px;
+  font-weight: 800;
+  margin-inline-start: 6px;
+}
+[data-theme="dark"] .idle-badge {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+.idle-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: pulse-red 1.4s infinite;
+}
+@keyframes pulse-red {
+  70% { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
+}
+
+.idle-btn.active {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border-color: #ef4444 !important;
+}
+
+.user-name-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ── TV / Wallboard Fullscreen Mode ──────────────────────────── */
+body.tv-mode {
+  padding: 0;
+  background: #0b0f19;
+  color: #f8fafc;
+}
+body.tv-mode .top {
+  padding: 16px 24px 8px;
+}
+body.tv-mode .toolbar,
+body.tv-mode .toolbar-hint,
+body.tv-mode .countdown,
+body.tv-mode .head-actions {
+  display: none !important;
+}
+body.tv-mode .target-panel,
+body.tv-mode .chart-panel,
+body.tv-mode .matrix-panel {
+  margin: 0 20px 16px;
+}
+body.tv-mode .cell-qty {
+  font-size: 20px;
+}
+body.tv-mode .user-id {
+  font-size: 16px;
 }
 
 /* ── RTL overrides ──────────────────────────────────────────── */
-/* Keep the data table always LTR — numbers and hours are LTR */
 [dir="rtl"] .matrix { direction: ltr; }
-
-/* Live-wrap content aligns to the start in RTL (right side) */
 [dir="rtl"] .live-wrap { text-align: start; }
 [dir="rtl"] .top-actions { justify-content: flex-start; }
-
-/* Panel head: reverse order of title vs actions */
 [dir="rtl"] .panel-head { flex-direction: row-reverse; }
 [dir="rtl"] .head-actions { flex-direction: row-reverse; }
+[dir="rtl"] .target-header { flex-direction: row-reverse; }
+
 

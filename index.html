@@ -24,12 +24,58 @@
       </div>
       <div class="meta" id="metaLine">Fetching data from the sheet...</div>
       <div class="top-actions">
+        <button id="themeBtn" type="button" class="icon-btn" title="Toggle Theme">🌙</button>
+        <button id="tvBtn" type="button" class="ghost" data-i18n="btn.tv">📺 TV Mode</button>
         <button id="langBtn" type="button" class="lang-btn">🌐 AR</button>
         <button id="refreshBtn" type="button" data-i18n="btn.refresh">Refresh now</button>
       </div>
     </div>
   </header>
 
+  <!-- Shift Target & Progress Bar -->
+  <section class="target-panel" id="targetSection">
+    <div class="target-header">
+      <div class="target-title-wrap">
+        <span class="target-icon">🎯</span>
+        <div>
+          <h3 data-i18n="target.title">Shift Target & Pace</h3>
+          <p data-i18n="target.subtitle">Real-time progress toward the shift goal</p>
+        </div>
+      </div>
+      <div class="target-controls">
+        <label class="target-input-label">
+          <span data-i18n="target.setLabel">Goal:</span>
+          <input id="targetInput" type="number" step="500" min="500" value="5000" />
+        </label>
+        <div class="target-badge" id="targetBadge">0%</div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+    </div>
+    <div class="target-stats" id="targetStats">
+      <span id="targetProgressText">0 / 5,000 units</span>
+      <span id="targetRemainingText">5,000 remaining</span>
+      <span id="targetPaceText">⚡ Pace: 0 units/hr</span>
+    </div>
+  </section>
+
+  <!-- Top 3 Podium & Stars Showcase -->
+  <section class="podium-section" id="podiumSection"></section>
+
+  <!-- Hourly Trend Chart -->
+  <section class="panel chart-panel" id="chartPanel">
+    <div class="panel-head">
+      <div>
+        <h3 data-i18n="chart.title">Darkstore Hourly Volume</h3>
+        <p data-i18n="chart.subtitle">Click any hour bar to isolate that hour in the table below</p>
+      </div>
+      <div id="chartPeakBadge" class="peak-badge">🔥 Peak: —</div>
+    </div>
+    <div class="chart-container" id="hourlyChart"></div>
+  </section>
+
+  <!-- Toolbar Filters -->
   <section class="toolbar">
     <label class="field">
       <span data-i18n="label.fromDate">From date</span>
@@ -51,18 +97,29 @@
     </label>
     <button id="allHoursBtn" class="ghost" type="button" data-i18n="btn.allHours">All hours</button>
 
+    <label class="field hub-field">
+      <span data-i18n="label.hub">Hub / Team</span>
+      <select id="hubSelect">
+        <option value="" data-i18n="hub.all">All Hubs</option>
+      </select>
+    </label>
+
     <label class="field grow">
       <span data-i18n="label.search">Search user</span>
       <input id="searchInput" type="search" placeholder="Type a username or name..." />
     </label>
+
     <label class="field">
       <span data-i18n="label.sortBy">Sort by</span>
       <select id="sortSelect">
         <option value="qty"  data-i18n="sort.qty">Highest quantity</option>
+        <option value="uph"  data-i18n="sort.uph">Highest UPH (Speed)</option>
         <option value="skus" data-i18n="sort.skus">Highest SKU count</option>
         <option value="name" data-i18n="sort.name">Name</option>
       </select>
     </label>
+
+    <button id="idleToggleBtn" class="ghost idle-btn" type="button" data-i18n="btn.idleOnly">⚠️ Idle Only</button>
     <div class="countdown" id="countdown">Refreshing in 60s</div>
   </section>
 
