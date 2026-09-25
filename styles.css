@@ -392,6 +392,8 @@ select, input { background: #fff; width: 100%; font-weight: 600; }
   z-index: 3;
   background: var(--yellow);
 }
+/* ── Sticky column layout ─────────────────────────────────────────── */
+/* col widths: # = 36px  |  Picker = 230px  |  Hrs = 56px  |  UPH = 70px */
 .matrix .sticky {
   position: sticky;
   left: 0;
@@ -399,12 +401,29 @@ select, input { background: #fff; width: 100%; font-weight: 600; }
   background: #fff;
   text-align: left;
 }
-.matrix th.sticky { z-index: 4; background: var(--yellow); }
-.matrix .user-col { min-width: 230px; max-width: 260px; left: 36px; }
-.matrix th.user-col { left: 36px; }
-.matrix td.sticky:first-child, .matrix th.sticky:first-child { min-width: 36px; width: 36px; }
-.matrix tfoot td { background: #111; color: #fff; font-weight: 800; position: sticky; bottom: 0; }
-.matrix tfoot .sticky { background: #111; color: #fff; }
+/* Header sticky cells sit above body sticky cells */
+.matrix th.sticky { z-index: 5; background: var(--yellow); }
+
+/* Col 1: # (rank number) */
+.matrix td.sticky:first-child,
+.matrix th.sticky:first-child { min-width: 36px; width: 36px; left: 0; z-index: 2; }
+.matrix th.sticky:first-child { z-index: 5; }
+
+/* Col 2: Picker name */
+.matrix .user-col  { min-width: 180px; max-width: 200px; left: 36px; z-index: 2; }
+.matrix th.user-col { left: 36px; z-index: 5; }
+
+/* Col 3: Hrs  (36 + 200 = 236) */
+.matrix .hrs-col  { min-width: 52px; width: 52px; left: 236px; z-index: 2; }
+.matrix th.hrs-col { left: 236px; z-index: 5; }
+
+/* Col 4: UPH  (36 + 200 + 52 = 288) */
+.matrix .uph-col  { min-width: 80px; width: 80px; left: 288px; z-index: 2; }
+.matrix th.uph-col { left: 288px; z-index: 5; }
+
+/* Foot row */
+.matrix tfoot td { background: #111; color: #fff; font-weight: 800; position: sticky; bottom: 0; z-index: 1; }
+.matrix tfoot .sticky { background: #111; color: #fff; z-index: 3; }
 .matrix tfoot .cell-sku { color: #ffe500; }
 tbody tr { cursor: pointer; }
 tbody tr:hover td { background: #fff8d0; }
