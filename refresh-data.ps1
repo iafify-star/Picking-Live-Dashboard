@@ -13,7 +13,7 @@ $DataNamesFile = Join-Path $Root "data\names.json"
 
 New-Item -ItemType Directory -Force -Path (Join-Path $Root "cache") | Out-Null
 
-function Load-NamesMap([string]$Path, [string]$FallbackPath) {
+function Import-NamesMap([string]$Path, [string]$FallbackPath) {
     $map = @{}
     $files = @($Path, $FallbackPath)
     foreach ($f in $files) {
@@ -34,7 +34,7 @@ function Load-NamesMap([string]$Path, [string]$FallbackPath) {
     return $map
 }
 
-function Load-ExistingDisplayNames([string]$DataPath) {
+function Get-ExistingDisplayNames([string]$DataPath) {
     $existing = @{}
     if (-not (Test-Path $DataPath)) { return $existing }
     try {
@@ -68,7 +68,7 @@ function Get-DisplayName([string]$Username, [hashtable]$NamesMap, [hashtable]$Ex
     return $Fallback
 }
 
-function Download-Sheet([string]$Url, [string]$Dest) {
+function Save-Sheet([string]$Url, [string]$Dest) {
     $req = [System.Net.HttpWebRequest]::Create($Url)
     $req.Method = "GET"
     $req.UserAgent = "Mozilla/5.0 PickDash"
@@ -84,7 +84,7 @@ function Download-Sheet([string]$Url, [string]$Dest) {
     }
 }
 
-function Parse-PickedAt([string]$Value) {
+function ConvertFrom-PickedAt([string]$Value) {
     if ([string]::IsNullOrWhiteSpace($Value)) { return $null }
     $m = [regex]::Match($Value.Trim(), '^(\d{1,2})/(\d{1,2})/(\d{2,4})\s+(\d{1,2}):(\d{2})')
     if (-not $m.Success) { return $null }
@@ -102,10 +102,10 @@ function Parse-PickedAt([string]$Value) {
 $tmp = Join-Path $env:TEMP "pick-dash-live.csv"
 $source = $SheetUrl
 try {
-    Download-Sheet $SheetUrl $tmp
+    Save-Sheet $SheetUrl $tmp
 } catch {
     $source = $PublishUrl
-    Download-Sheet $PublishUrl $tmp
+    Save-Sheet $PublishUrl $tmp
 }
 
 $parser = New-Object Microsoft.VisualBasic.FileIO.TextFieldParser($tmp, [Text.Encoding]::UTF8)
@@ -130,8 +130,8 @@ if ($idxUser -lt 0 -or $idxSku -lt 0 -or $idxPicked -lt 0) {
     throw "Missing columns: username / sku / picked_at"
 }
 
-$namesMap = Load-NamesMap $NamesFile $DataNamesFile
-$existingDisplayNames = Load-ExistingDisplayNames $OutFile
+$namesMap = Import-NamesMap $NamesFile $DataNamesFile
+$existingDisplayNames = Get-ExistingDisplayNames $OutFile
 
 $users = @{}
 $allSkus = @{}
@@ -148,7 +148,7 @@ while (-not $parser.EndOfData) {
         if ($status -and $status -ne "picked") { $skipped++; continue }
     }
 
-    $when = Parse-PickedAt $(if ($idxPicked -lt $fields.Length) { $fields[$idxPicked] } else { "" })
+    $when = ConvertFrom-PickedAt $(if ($idxPicked -lt $fields.Length) { $fields[$idxPicked] } else { "" })
     if (-not $when) { continue }
 
     $user = $(if ($idxUser -lt $fields.Length) { $fields[$idxUser] } else { "" }).Trim()

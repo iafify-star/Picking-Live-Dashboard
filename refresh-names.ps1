@@ -38,7 +38,7 @@ $Tabs = [ordered]@{
 
 New-Item -ItemType Directory -Force -Path (Join-Path $Root "cache") | Out-Null
 
-function Download-Sheet([string]$Url, [string]$Dest) {
+function Save-Sheet([string]$Url, [string]$Dest) {
     $req = [System.Net.HttpWebRequest]::Create($Url)
     $req.Method = "GET"
     $req.UserAgent = "Mozilla/5.0 PickDash"
@@ -110,7 +110,7 @@ foreach ($tab in $Tabs.Keys) {
     $gid = $Tabs[$tab]
     $dest = Join-Path $tmpDir "$tab.csv"
     try {
-        Download-Sheet "https://docs.google.com/spreadsheets/d/$SheetId/export?format=csv&gid=$gid" $dest
+        Save-Sheet "https://docs.google.com/spreadsheets/d/$SheetId/export?format=csv&gid=$gid" $dest
         $map = Read-IdNameMap $dest
         foreach ($key in $map.Keys) {
             if (-not $combined.ContainsKey($key) -or -not $combined[$key]) {
