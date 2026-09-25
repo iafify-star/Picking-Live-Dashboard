@@ -1,0 +1,12 @@
+{
+  "name": "Noon Minutes Picking Dashboard",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "dashboard",
+      "command": "python3 .cursor/serve.py"
+    }
+  ],
+  "ports": [5500]
+}
