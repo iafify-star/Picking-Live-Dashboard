@@ -40,6 +40,17 @@
       <input id="dateTo" type="date" />
     </label>
     <button id="allDaysBtn" class="ghost" type="button" data-i18n="btn.allDays">All dates</button>
+
+    <label class="field hour-field">
+      <span data-i18n="label.fromHour">From hour</span>
+      <select id="hourFrom"></select>
+    </label>
+    <label class="field hour-field">
+      <span data-i18n="label.toHour">To hour</span>
+      <select id="hourTo"></select>
+    </label>
+    <button id="allHoursBtn" class="ghost" type="button" data-i18n="btn.allHours">All hours</button>
+
     <label class="field grow">
       <span data-i18n="label.search">Search user</span>
       <input id="searchInput" type="search" placeholder="Type a username or name..." />
@@ -56,10 +67,13 @@
   </section>
 
   <p class="toolbar-hint" data-i18n="hint.toolbar">
-    Pick a date range (or tap a day below), search for a user, then read the table: each hour column shows
+    Pick a date range and hours (or tap a preset below), search for a user, then read the table: each hour column shows
     what was picked that hour. Data pulls live from the picking sheet — throw a new pull and it shows up here.
   </p>
-  <div class="day-chips" id="dayChips"></div>
+  <div class="filter-chips-wrap">
+    <div class="day-chips" id="dayChips"></div>
+    <div class="shift-chips" id="shiftChips"></div>
+  </div>
 
   <section class="kpis" id="kpis"></section>
 

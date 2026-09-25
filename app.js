@@ -13,6 +13,15 @@ const TRANSLATIONS = {
     'label.fromDate'    : 'From date',
     'label.toDate'      : 'To date',
     'btn.allDays'       : 'All dates',
+    'label.fromHour'    : 'From hour',
+    'label.toHour'      : 'To hour',
+    'hour.all'          : 'All hours',
+    'btn.allHours'      : 'All hours',
+    'shift.title'       : 'Quick shifts:',
+    'shift.all'         : 'Full 24h',
+    'shift.morning'     : 'Morning (08:00 - 16:00)',
+    'shift.evening'     : 'Evening (16:00 - 00:00)',
+    'shift.night'       : 'Night (00:00 - 08:00)',
     'label.search'      : 'Search user',
     'search.placeholder': 'Type a username or name...',
     'label.sortBy'      : 'Sort by',
@@ -20,7 +29,7 @@ const TRANSLATIONS = {
     'sort.skus'         : 'Highest SKU count',
     'sort.name'         : 'Name',
     'countdown'         : 'Refreshing in {n}s',
-    'hint.toolbar'      : 'Pick a date range (or tap a day below), search for a user, then read the table: each hour column shows what was picked that hour. Data pulls live from the picking sheet — throw a new pull and it shows up here.',
+    'hint.toolbar'      : 'Pick a date range and hours (or tap a preset below), search for a user, then read the table: each hour column shows what was picked that hour. Data pulls live from the picking sheet — throw a new pull and it shows up here.',
     'panel.title'       : 'Hourly Productivity per User',
     'panel.subtitle'    : 'One row per picker · one column per hour · sticky columns stay visible while you scroll',
     'btn.export'        : 'Download Excel',
@@ -32,18 +41,18 @@ const TRANSLATIONS = {
     'legend.hot'        : 'Busiest hour',
     'legend.click'      : 'Click an hour header or a row to highlight it',
     'kpi.qty.label'     : 'Quantity in range',
-    'kpi.qty.hint'      : 'Total units picked across the selected dates',
+    'kpi.qty.hint'      : 'Total units picked across the selected dates & hours',
     'kpi.sku.label'     : 'SKU count',
     'kpi.sku.hint'      : 'Distinct products picked — not total units',
     'kpi.pickers.label' : 'Active pickers',
-    'kpi.pickers.hint'  : 'Unique users with at least one pick in range',
+    'kpi.pickers.hint'  : 'Unique users with at least one pick in selected hours',
     'kpi.lastHour.label': 'Last hour with picks: {h}',
     'kpi.lastHour.hint' : 'Totals for the most recent hour that has data',
     'table.hash'        : '#',
     'table.name'        : 'Name',
     'table.total'       : 'Total',
     'table.hourlyTotal' : 'Hourly total',
-    'table.noData'      : 'No picks in this date range',
+    'table.noData'      : 'No picks in this date / hour range',
     'live.live'         : 'LIVE',
     'live.sync'         : 'SYNC',
     'live.off'          : 'OFF',
@@ -61,6 +70,15 @@ const TRANSLATIONS = {
     'label.fromDate'    : 'من تاريخ',
     'label.toDate'      : 'إلى تاريخ',
     'btn.allDays'       : 'كل التواريخ',
+    'label.fromHour'    : 'من الساعة',
+    'label.toHour'      : 'إلى الساعة',
+    'hour.all'          : 'كل الساعات',
+    'btn.allHours'      : 'كل الساعات',
+    'shift.title'       : 'شفتات سريعة:',
+    'shift.all'         : 'طول اليوم (24 س)',
+    'shift.morning'     : 'صباحي (08:00 - 16:00)',
+    'shift.evening'     : 'مسائي (16:00 - 00:00)',
+    'shift.night'       : 'ليلي (00:00 - 08:00)',
     'label.search'      : 'بحث عن مستخدم',
     'search.placeholder': 'اكتب اسم المستخدم أو الاسم...',
     'label.sortBy'      : 'ترتيب حسب',
@@ -68,7 +86,7 @@ const TRANSLATIONS = {
     'sort.skus'         : 'أعلى SKU',
     'sort.name'         : 'الاسم',
     'countdown'         : 'التحديث خلال {n} ث',
-    'hint.toolbar'      : 'اختر نطاق تاريخ (أو انقر على يوم أدناه)، ابحث عن مستخدم، ثم اقرأ الجدول: كل عمود يمثل ساعة. البيانات مباشرة من شيت الجمع.',
+    'hint.toolbar'      : 'اختر نطاق التاريخ والساعات (أو اضغط على شفت محدد أدناه)، ابحث عن مستخدم، واقرأ الجدول: كل عمود يمثل ساعة ضمن الوقت المحدد.',
     'panel.title'       : 'الإنتاجية بالساعة لكل مستخدم',
     'panel.subtitle'    : 'صف لكل جامع · عمود لكل ساعة · الأعمدة الثابتة تبقى ظاهرة أثناء التمرير',
     'btn.export'        : 'تحميل Excel',
@@ -80,18 +98,18 @@ const TRANSLATIONS = {
     'legend.hot'        : 'أعلى ساعة',
     'legend.click'      : 'انقر على رأس الساعة أو الصف لتمييزه',
     'kpi.qty.label'     : 'الكمية في الفترة',
-    'kpi.qty.hint'      : 'إجمالي الوحدات المجموعة في التواريخ المحددة',
+    'kpi.qty.hint'      : 'إجمالي الوحدات المجموعة في التواريخ والساعات المحددة',
     'kpi.sku.label'     : 'عدد SKU',
     'kpi.sku.hint'      : 'منتجات مختلفة تم جمعها — ليس إجمالي الوحدات',
     'kpi.pickers.label' : 'الجامعون النشطون',
-    'kpi.pickers.hint'  : 'مستخدمون لديهم جمع واحد على الأقل في الفترة',
+    'kpi.pickers.hint'  : 'مستخدمون لديهم جمع واحد على الأقل في الساعات المحددة',
     'kpi.lastHour.label': 'آخر ساعة بها جمع: {h}',
     'kpi.lastHour.hint' : 'الإجماليات لآخر ساعة تحتوي على بيانات',
     'table.hash'        : '#',
     'table.name'        : 'الاسم',
     'table.total'       : 'الإجمالي',
     'table.hourlyTotal' : 'إجمالي الساعة',
-    'table.noData'      : 'لا يوجد جمع في هذه الفترة',
+    'table.noData'      : 'لا يوجد جمع في هذه الفترة / الساعات',
     'live.live'         : 'مباشر',
     'live.sync'         : 'مزامنة',
     'live.off'          : 'خطأ',
@@ -102,24 +120,28 @@ const TRANSLATIONS = {
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
 const els = {
-  livePill  : document.getElementById("livePill"),
-  liveText  : document.getElementById("liveText"),
-  metaLine  : document.getElementById("metaLine"),
-  refreshBtn: document.getElementById("refreshBtn"),
-  langBtn   : document.getElementById("langBtn"),
-  dateFrom  : document.getElementById("dateFrom"),
-  dateTo    : document.getElementById("dateTo"),
-  allDaysBtn: document.getElementById("allDaysBtn"),
-  dayChips  : document.getElementById("dayChips"),
+  livePill   : document.getElementById("livePill"),
+  liveText   : document.getElementById("liveText"),
+  metaLine   : document.getElementById("metaLine"),
+  refreshBtn : document.getElementById("refreshBtn"),
+  langBtn    : document.getElementById("langBtn"),
+  dateFrom   : document.getElementById("dateFrom"),
+  dateTo     : document.getElementById("dateTo"),
+  allDaysBtn : document.getElementById("allDaysBtn"),
+  hourFrom   : document.getElementById("hourFrom"),
+  hourTo     : document.getElementById("hourTo"),
+  allHoursBtn: document.getElementById("allHoursBtn"),
+  dayChips   : document.getElementById("dayChips"),
+  shiftChips : document.getElementById("shiftChips"),
   searchInput: document.getElementById("searchInput"),
-  sortSelect: document.getElementById("sortSelect"),
-  countdown : document.getElementById("countdown"),
-  kpis      : document.getElementById("kpis"),
-  exportBtn : document.getElementById("exportBtn"),
-  userCount : document.getElementById("userCount"),
-  matrixHead: document.getElementById("matrixHead"),
-  matrixFoot: document.getElementById("matrixFoot"),
-  userBody  : document.getElementById("userBody"),
+  sortSelect : document.getElementById("sortSelect"),
+  countdown  : document.getElementById("countdown"),
+  kpis       : document.getElementById("kpis"),
+  exportBtn  : document.getElementById("exportBtn"),
+  userCount  : document.getElementById("userCount"),
+  matrixHead : document.getElementById("matrixHead"),
+  matrixFoot : document.getElementById("matrixFoot"),
+  userBody   : document.getElementById("userBody"),
 };
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -127,6 +149,8 @@ const state = {
   data        : null,
   from        : "",
   to          : "",
+  hourFrom    : "",
+  hourTo      : "",
   selectedUser: "",
   selectedHour: null,
   search      : "",
@@ -171,6 +195,8 @@ function applyLang() {
   setLiveState(els.liveText.dataset.state || "live");
   if (state.lastMeta) setMeta(state.lastMeta.key, state.lastMeta.params);
 
+  populateHourSelects();
+
   // Re-render table / KPIs so dynamic strings update too
   if (state.data) render();
 
@@ -203,6 +229,47 @@ function hourLabel(h) {
   return String(h).padStart(2, "0") + ":00";
 }
 
+function populateHourSelects() {
+  const allLabel = t("hour.all");
+  let fromOpts = `<option value="">${allLabel}</option>`;
+  let toOpts   = `<option value="">${allLabel}</option>`;
+  for (let h = 0; h < 24; h++) {
+    const lbl = hourLabel(h);
+    fromOpts += `<option value="${h}">${lbl}</option>`;
+    toOpts   += `<option value="${h}">${lbl}</option>`;
+  }
+  els.hourFrom.innerHTML = fromOpts;
+  els.hourTo.innerHTML   = toOpts;
+  els.hourFrom.value     = state.hourFrom !== null && state.hourFrom !== undefined ? String(state.hourFrom) : "";
+  els.hourTo.value       = state.hourTo   !== null && state.hourTo   !== undefined ? String(state.hourTo)   : "";
+}
+
+function getHourRange() {
+  const from = state.hourFrom !== "" && state.hourFrom !== null && state.hourFrom !== undefined ? Number(state.hourFrom) : null;
+  const to   = state.hourTo   !== "" && state.hourTo   !== null && state.hourTo   !== undefined ? Number(state.hourTo)   : null;
+  return { from, to };
+}
+
+function isHourInRange(h, from, to) {
+  if (from === null && to === null) return true;
+  const f = from !== null ? from : 0;
+  const t = to !== null ? to : 23;
+  if (f <= t) {
+    return h >= f && h <= t;
+  }
+  // Wrap-around for overnight / night shifts (e.g. 22:00 to 06:00)
+  return h >= f || h <= t;
+}
+
+function getValidHoursList() {
+  const { from, to } = getHourRange();
+  const list = [];
+  for (let h = 0; h < 24; h++) {
+    if (isHourInRange(h, from, to)) list.push(h);
+  }
+  return list;
+}
+
 function selectedDays() {
   const days = toArray(state.data && state.data.days);
   return days.filter((d) => d >= state.from && d <= state.to);
@@ -228,23 +295,46 @@ function rangeStats(user) {
   const out  = emptyHours();
   days.forEach((day) => {
     const info = dayInfo(user, day);
-    out.qty        += info.qty;
-    out.uniqueSkus += info.uniqueSkus;
     info.hoursQty.forEach((v, i) => { out.hoursQty[i] += v; });
     info.hoursSku.forEach((v, i) => { out.hoursSku[i] += v; });
   });
-  if (days.length > 1) out.uniqueSkus = Number(user.uniqueSkus || out.uniqueSkus);
+
+  const { from, to } = getHourRange();
+  if (from === null && to === null) {
+    days.forEach((day) => {
+      const info = dayInfo(user, day);
+      out.qty        += info.qty;
+      out.uniqueSkus += info.uniqueSkus;
+    });
+    if (days.length > 1) out.uniqueSkus = Number(user.uniqueSkus || out.uniqueSkus);
+  } else {
+    let filteredQty = 0;
+    let filteredSku = 0;
+    for (let h = 0; h < 24; h++) {
+      if (isHourInRange(h, from, to)) {
+        filteredQty += out.hoursQty[h];
+        filteredSku += out.hoursSku[h];
+      }
+    }
+    out.qty        = filteredQty;
+    out.uniqueSkus = filteredSku;
+  }
   return out;
 }
 
-function peakHour(hours) {
+function peakHour(hours, validHours) {
   let best = 0, idx = -1;
-  hours.forEach((v, i) => { if (v > best) { best = v; idx = i; } });
+  const list = validHours || [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+  list.forEach((i) => {
+    const v = hours[i] || 0;
+    if (v > best) { best = v; idx = i; }
+  });
   return idx === -1 ? { label: "—", value: 0 } : { label: hourLabel(idx), value: best };
 }
 
-function workedHours(hours) {
-  return hours.filter((v) => v > 0).length;
+function workedHours(hours, validHours) {
+  const list = validHours || [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+  return list.filter((i) => (hours[i] || 0) > 0).length;
 }
 
 // ─── Data loading ─────────────────────────────────────────────────────────────
@@ -311,10 +401,11 @@ function applyDates() {
 
 function visibleUsers() {
   const q = state.search.trim().toLowerCase();
+  const checkHours = getValidHoursList();
   let rows = state.data.users.map((u) => {
     const stats = rangeStats(u);
-    const work  = workedHours(stats.hoursQty);
-    const peak  = peakHour(stats.hoursQty);
+    const work  = workedHours(stats.hoursQty, checkHours);
+    const peak  = peakHour(stats.hoursQty, checkHours);
     return { ...u, stats, work, uph: work ? Math.round(stats.qty / work) : 0, peak };
   }).filter((u) => u.stats.qty > 0);
 
@@ -343,21 +434,47 @@ function renderChips() {
   }).join("");
 }
 
-function renderKpis(rows) {
+function renderShiftChips() {
+  if (!els.shiftChips) return;
+  const shifts = [
+    { id: "all",     label: t("shift.all"),     from: "",   to: ""   },
+    { id: "morning", label: t("shift.morning"), from: "8",  to: "16" },
+    { id: "evening", label: t("shift.evening"), from: "16", to: "23" },
+    { id: "night",   label: t("shift.night"),   from: "0",  to: "7"  },
+  ];
+
+  const currentFrom = state.hourFrom !== null && state.hourFrom !== undefined ? String(state.hourFrom) : "";
+  const currentTo   = state.hourTo   !== null && state.hourTo   !== undefined ? String(state.hourTo)   : "";
+
+  let html = `<span class="shift-title">${t("shift.title")}</span>`;
+  html += shifts.map((s) => {
+    const on = currentFrom === s.from && currentTo === s.to;
+    return `<button type="button" class="chip ${on ? "on" : ""}" data-shift="${s.id}" data-from="${s.from}" data-to="${s.to}">${s.label}</button>`;
+  }).join("");
+
+  els.shiftChips.innerHTML = html;
+}
+
+function renderKpis(rows, hours) {
   const qty = rows.reduce((s, u) => s + u.stats.qty, 0);
   const sku = rows.reduce((s, u) => s + u.stats.uniqueSkus, 0);
-  let lastHour = 0;
-  for (let h = 23; h >= 0; h--) {
-    if (rows.some((u) => u.stats.hoursQty[h] > 0)) { lastHour = h; break; }
+  let lastHour = -1;
+  const hList = hours && hours.length ? hours : [];
+  for (let i = hList.length - 1; i >= 0; i--) {
+    const h = hList[i];
+    if (rows.some((u) => (u.stats.hoursQty[h] || 0) > 0)) {
+      lastHour = h;
+      break;
+    }
   }
-  const hourQty = rows.reduce((s, u) => s + (u.stats.hoursQty[lastHour] || 0), 0);
-  const hourSku = rows.reduce((s, u) => s + (u.stats.hoursSku[lastHour]  || 0), 0);
+  const hourQty = lastHour >= 0 ? rows.reduce((s, u) => s + (u.stats.hoursQty[lastHour] || 0), 0) : 0;
+  const hourSku = lastHour >= 0 ? rows.reduce((s, u) => s + (u.stats.hoursSku[lastHour]  || 0), 0) : 0;
 
   const cards = [
     [t("kpi.qty.label"),                                 fmt(qty),                                       t("kpi.qty.hint"),      true ],
     [t("kpi.sku.label"),                                 fmt(sku),                                       t("kpi.sku.hint"),      false],
     [t("kpi.pickers.label"),                             fmt(rows.length),                               t("kpi.pickers.hint"),  false],
-    [t("kpi.lastHour.label", { h: hourLabel(lastHour) }), `${fmt(hourSku)} SKU · ${fmt(hourQty)} qty`, t("kpi.lastHour.hint"), false],
+    [t("kpi.lastHour.label", { h: lastHour >= 0 ? hourLabel(lastHour) : "—" }), `${fmt(hourSku)} SKU · ${fmt(hourQty)} qty`, t("kpi.lastHour.hint"), false],
   ];
 
   els.kpis.innerHTML = cards.map(([label, value, hint, gold]) => `
@@ -370,15 +487,29 @@ function renderKpis(rows) {
 }
 
 function activeHours(rows) {
-  let first = 24, last = -1;
-  rows.forEach((u) => {
-    u.stats.hoursQty.forEach((v, h) => {
-      if (v > 0) { if (h < first) first = h; if (h > last) last = h; }
+  const { from, to } = getHourRange();
+  if (from === null && to === null) {
+    let first = 24, last = -1;
+    (rows || []).forEach((u) => {
+      u.stats.hoursQty.forEach((v, h) => {
+        if (v > 0) { if (h < first) first = h; if (h > last) last = h; }
+      });
     });
-  });
-  if (last < 0) return [];
+    if (last < 0) return [];
+    const hours = [];
+    for (let h = first; h <= last; h++) hours.push(h);
+    return hours;
+  }
+
+  const f = from !== null ? from : 0;
+  const t = to !== null ? to : 23;
   const hours = [];
-  for (let h = first; h <= last; h++) hours.push(h);
+  if (f <= t) {
+    for (let h = f; h <= t; h++) hours.push(h);
+  } else {
+    for (let h = f; h <= 23; h++) hours.push(h);
+    for (let h = 0; h <= t; h++) hours.push(h);
+  }
   return hours;
 }
 
@@ -390,8 +521,8 @@ function heatClass(value, max) {
   return "low";
 }
 
-function renderTable(rows) {
-  const hours     = activeHours(rows);
+function renderTable(rows, hoursPassed) {
+  const hours     = hoursPassed || activeHours(rows);
   const totalsQty = Array(24).fill(0);
   const totalsSku = Array(24).fill(0);
   let maxCell = 1;
@@ -449,9 +580,11 @@ function renderTable(rows) {
 function render() {
   if (!state.data) return;
   renderChips();
-  const rows = visibleUsers();
-  renderKpis(rows);
-  renderTable(rows);
+  renderShiftChips();
+  const rows  = visibleUsers();
+  const hours = activeHours(rows);
+  renderKpis(rows, hours);
+  renderTable(rows, hours);
 }
 
 // ─── Export ───────────────────────────────────────────────────────────────────
@@ -490,10 +623,12 @@ function exportExcel() {
 
   const blob = new Blob(["\uFEFF" + html], { type: "application/vnd.ms-excel;charset=utf-8;" });
   const link = document.createElement("a");
-  const from = state.from.replaceAll("-", "");
-  const to   = state.to.replaceAll("-", "");
+  const from  = state.from.replaceAll("-", "");
+  const to    = state.to.replaceAll("-", "");
+  const hFrom = state.hourFrom !== "" && state.hourFrom !== null ? `${String(state.hourFrom).padStart(2, "0")}h` : "00h";
+  const hTo   = state.hourTo   !== "" && state.hourTo   !== null ? `${String(state.hourTo).padStart(2, "0")}h`   : "23h";
   link.href     = URL.createObjectURL(blob);
-  link.download = `picking-${from}-${to}.xls`;
+  link.download = `picking-${from}-${to}_${hFrom}-${hTo}.xls`;
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -515,6 +650,40 @@ els.allDaysBtn.addEventListener("click", () => {
   state.selectedHour = null;
   render();
 });
+
+els.hourFrom.addEventListener("change", () => {
+  state.hourFrom = els.hourFrom.value;
+  state.selectedHour = null;
+  render();
+});
+
+els.hourTo.addEventListener("change", () => {
+  state.hourTo = els.hourTo.value;
+  state.selectedHour = null;
+  render();
+});
+
+els.allHoursBtn.addEventListener("click", () => {
+  state.hourFrom = "";
+  state.hourTo   = "";
+  els.hourFrom.value = "";
+  els.hourTo.value   = "";
+  state.selectedHour = null;
+  render();
+});
+
+if (els.shiftChips) {
+  els.shiftChips.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-shift]");
+    if (!btn) return;
+    state.hourFrom = btn.dataset.from;
+    state.hourTo   = btn.dataset.to;
+    els.hourFrom.value = state.hourFrom;
+    els.hourTo.value   = state.hourTo;
+    state.selectedHour = null;
+    render();
+  });
+}
 
 els.dayChips.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-day]");
