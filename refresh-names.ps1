@@ -83,7 +83,25 @@ function Read-IdNameMap([string]$Path) {
     return $result
 }
 
+$DataNamesFile = Join-Path $Root "data\names.json"
+
+# Start with existing names as base so a single failed run NEVER erases known employees
 $combined = @{}
+foreach ($sourceFile in @($OutFile, $DataNamesFile)) {
+    if (Test-Path $sourceFile) {
+        try {
+            $prev = Get-Content $sourceFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($prev -and $prev.map) {
+                foreach ($prop in $prev.map.PSObject.Properties) {
+                    if ($prop.Value -and -not $combined.ContainsKey($prop.Name)) {
+                        $combined[$prop.Name] = $prop.Value
+                    }
+                }
+            }
+        } catch {}
+    }
+}
+
 $tmpDir = Join-Path $env:TEMP "pick-dash-names"
 New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
 $okTabs = 0
@@ -95,7 +113,9 @@ foreach ($tab in $Tabs.Keys) {
         Download-Sheet "https://docs.google.com/spreadsheets/d/$SheetId/export?format=csv&gid=$gid" $dest
         $map = Read-IdNameMap $dest
         foreach ($key in $map.Keys) {
-            if (-not $combined.ContainsKey($key)) { $combined[$key] = $map[$key] }
+            if (-not $combined.ContainsKey($key) -or -not $combined[$key]) {
+                $combined[$key] = $map[$key]
+            }
         }
         if ($map.Count -gt 0) { $okTabs++ }
     } catch {
@@ -114,4 +134,11 @@ $json = $payload | ConvertTo-Json -Depth 4 -Compress
 $utf8 = New-Object System.Text.UTF8Encoding $false
 [IO.File]::WriteAllText($TmpOut, $json, $utf8)
 Move-Item -Path $TmpOut -Destination $OutFile -Force
+
+# Also write to data\names.json so it is tracked and available statically
+try {
+    New-Item -ItemType Directory -Force -Path (Join-Path $Root "data") | Out-Null
+    [IO.File]::WriteAllText($DataNamesFile, $json, $utf8)
+} catch {}
+
 Write-Output "OK names=$($combined.Count) tabs=$okTabs/$($Tabs.Count)"

@@ -112,10 +112,23 @@ function parsePickedAt(value) {
   const date =
     String(year).padStart(4, "0") + "-" + String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
   return { date, hour };
+const fs = require("fs");
+const path = require("path");
+
+function getStaticNamesMap() {
+  try {
+    const p = path.join(__dirname, "../data/names.json");
+    if (fs.existsSync(p)) {
+      const raw = fs.readFileSync(p, "utf8");
+      const data = JSON.parse(raw);
+      return data.map || {};
+    }
+  } catch (_) {}
+  return {};
 }
 
 async function buildNamesMap() {
-  const combined = {};
+  const combined = Object.assign({}, getStaticNamesMap());
   const entries = Object.entries(NAMES_TABS);
 
   const results = await Promise.allSettled(
@@ -147,7 +160,7 @@ async function buildNamesMap() {
   for (const r of results) {
     if (r.status === "fulfilled") {
       for (const [key, name] of Object.entries(r.value)) {
-        if (!(key in combined)) combined[key] = name;
+        if (!(key in combined) || !combined[key]) combined[key] = name;
       }
     }
   }
@@ -158,8 +171,10 @@ function getDisplayName(username, namesMap, fallback) {
   const local = username.split("@")[0];
   if (local.length >= 9) {
     const key = local.slice(0, 9).toUpperCase();
-    if (namesMap[key]) return namesMap[key];
+    if (namesMap && namesMap[key]) return namesMap[key];
   }
+  const fullKey = local.toUpperCase();
+  if (namesMap && namesMap[fullKey]) return namesMap[fullKey];
   return fallback;
 }
 

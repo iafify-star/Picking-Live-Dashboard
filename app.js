@@ -234,6 +234,92 @@ const state = {
   lastMeta    : null,   // { key, params } — re-applied on language switch
 };
 
+// ─── Persistent Employee Names Cache ──────────────────────────────────────────
+// Ensures picker names never revert to usernames once resolved.
+const NAMES_STORAGE_KEY = "pickdash_names_cache_v2";
+
+const namesCache = (() => {
+  try {
+    const raw = localStorage.getItem(NAMES_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (_) {
+    return {};
+  }
+})();
+
+function saveNamesCache() {
+  try {
+    localStorage.setItem(NAMES_STORAGE_KEY, JSON.stringify(namesCache));
+  } catch (_) {}
+}
+
+function resolveDisplayName(userOrUsername, existingDisplayName) {
+  const username = typeof userOrUsername === "string" ? userOrUsername : ((userOrUsername && userOrUsername.username) || "");
+  const local = username.split("@")[0].trim();
+  const id9 = local.length >= 9 ? local.slice(0, 9).toUpperCase() : "";
+  const idFull = local.toUpperCase();
+  const userKey = username.toLowerCase();
+
+  // 1. If valid real human name is given (not equal to username, ID, or empty)
+  if (
+    existingDisplayName &&
+    existingDisplayName !== username &&
+    existingDisplayName !== local &&
+    !existingDisplayName.includes("@") &&
+    existingDisplayName.trim().length > 0
+  ) {
+    let dirty = false;
+    if (id9 && namesCache[id9] !== existingDisplayName) { namesCache[id9] = existingDisplayName; dirty = true; }
+    if (idFull && namesCache[idFull] !== existingDisplayName) { namesCache[idFull] = existingDisplayName; dirty = true; }
+    if (userKey && namesCache[userKey] !== existingDisplayName) { namesCache[userKey] = existingDisplayName; dirty = true; }
+    if (dirty) saveNamesCache();
+    return existingDisplayName;
+  }
+
+  // 2. Check cached 9-character ID (standard employee ID in attendance sheet)
+  if (id9 && namesCache[id9]) return namesCache[id9];
+
+  // 3. Check full local part
+  if (idFull && namesCache[idFull]) return namesCache[idFull];
+
+  // 4. Check full username
+  if (userKey && namesCache[userKey]) return namesCache[userKey];
+
+  return existingDisplayName || local || username;
+}
+
+function applyNamesToUsers(users) {
+  if (!users || !Array.isArray(users)) return;
+  users.forEach((u) => {
+    u.displayName = resolveDisplayName(u, u.displayName);
+  });
+}
+
+async function loadStaticNames() {
+  try {
+    const res = await fetch("/data/names.json", { cache: "default" });
+    if (!res.ok) return;
+    const json = await res.json();
+    if (json && json.map) {
+      let updated = false;
+      for (const [k, v] of Object.entries(json.map)) {
+        const key = k.toUpperCase();
+        if (v && !namesCache[key]) {
+          namesCache[key] = v;
+          updated = true;
+        }
+      }
+      if (updated) {
+        saveNamesCache();
+        if (state.data && state.data.users) {
+          applyNamesToUsers(state.data.users);
+          render();
+        }
+      }
+    }
+  } catch (_) {}
+}
+
 // ─── i18n helpers ─────────────────────────────────────────────────────────────
 function t(key, params = {}) {
   let text = TRANSLATIONS[state.lang]?.[key] ?? TRANSLATIONS.en[key] ?? key;
@@ -457,6 +543,7 @@ async function loadData(fresh) {
     if (!data.ok) throw new Error(data.error || "Failed to fetch data");
     data.users = toArray(data.users);
     data.days  = toArray(data.days);
+    applyNamesToUsers(data.users);
     state.data = data;
     populateHubSelect(data.users);
     const last  = data.days[data.days.length - 1] || "";
@@ -1100,5 +1187,6 @@ setInterval(() => {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 applyTheme();
 applyLang();
+loadStaticNames();
 loadData(true);
 

@@ -9,30 +9,62 @@ $NamesFile = Join-Path $Root "cache\names.json"
 $SheetUrl = "https://docs.google.com/spreadsheets/d/1l6EwjL3i0eNy3mdYlcUcOF8un1-31ycKJEL5cuZ9MkQ/export?format=csv&gid=841809744"
 $PublishUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQm8drSF8Zoa60ahlcWKiNSRKmvwWgaw39kXhbTlR4gtTDIqKDvYiCTla-YDqnsirHmWf5y9LeUMLvf/pub?gid=841809744&single=true&output=csv"
 
+$DataNamesFile = Join-Path $Root "data\names.json"
+
 New-Item -ItemType Directory -Force -Path (Join-Path $Root "cache") | Out-Null
 
-function Load-NamesMap([string]$Path) {
+function Load-NamesMap([string]$Path, [string]$FallbackPath) {
     $map = @{}
-    if (-not (Test-Path $Path)) { return $map }
-    try {
-        $obj = Get-Content $Path -Raw -Encoding UTF8 | ConvertFrom-Json
-        if ($obj -and $obj.map) {
-            foreach ($prop in $obj.map.PSObject.Properties) {
-                $map[$prop.Name] = $prop.Value
+    $files = @($Path, $FallbackPath)
+    foreach ($f in $files) {
+        if (-not (Test-Path $f)) { continue }
+        try {
+            $obj = Get-Content $f -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($obj -and $obj.map) {
+                foreach ($prop in $obj.map.PSObject.Properties) {
+                    if ($prop.Value -and -not $map.ContainsKey($prop.Name)) {
+                        $map[$prop.Name] = $prop.Value
+                    }
+                }
             }
+        } catch {
+            # Keep whatever else we have loaded
         }
-    } catch {
-        # A broken names cache should not break the picking dashboard.
     }
     return $map
 }
 
-function Get-DisplayName([string]$Username, [hashtable]$NamesMap, [string]$Fallback) {
+function Load-ExistingDisplayNames([string]$DataPath) {
+    $existing = @{}
+    if (-not (Test-Path $DataPath)) { return $existing }
+    try {
+        $obj = Get-Content $DataPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($obj -and $obj.users) {
+            foreach ($u in $obj.users) {
+                if ($u.username -and $u.displayName -and $u.displayName -ne $u.name -and $u.displayName -ne $u.username) {
+                    $existing[$u.username.ToLowerInvariant()] = $u.displayName
+                }
+            }
+        }
+    } catch {}
+    return $existing
+}
+
+function Get-DisplayName([string]$Username, [hashtable]$NamesMap, [hashtable]$ExistingNames, [string]$Fallback) {
+    # 1. If we already know this user's real name from previous sync, never lose it!
+    $lower = $Username.ToLowerInvariant()
+    if ($ExistingNames -and $ExistingNames.ContainsKey($lower) -and $ExistingNames[$lower]) {
+        return $ExistingNames[$lower]
+    }
     $local = $Username.Split("@")[0]
+    # 2. Check 9-character employee ID
     if ($local.Length -ge 9) {
         $key = $local.Substring(0, 9).ToUpperInvariant()
-        if ($NamesMap.ContainsKey($key)) { return $NamesMap[$key] }
+        if ($NamesMap.ContainsKey($key) -and $NamesMap[$key]) { return $NamesMap[$key] }
     }
+    # 3. Check full local ID
+    $localUpper = $local.ToUpperInvariant()
+    if ($NamesMap.ContainsKey($localUpper) -and $NamesMap[$localUpper]) { return $NamesMap[$localUpper] }
     return $Fallback
 }
 
@@ -97,7 +129,8 @@ if ($idxUser -lt 0 -or $idxSku -lt 0 -or $idxPicked -lt 0) {
     throw "Missing columns: username / sku / picked_at"
 }
 
-$namesMap = Load-NamesMap $NamesFile
+$namesMap = Load-NamesMap $NamesFile $DataNamesFile
+$existingDisplayNames = Load-ExistingDisplayNames $OutFile
 
 $users = @{}
 $allSkus = @{}
@@ -178,7 +211,7 @@ $userList = foreach ($key in $users.Keys) {
     [ordered]@{
         username = $u.username
         name = $u.name
-        displayName = (Get-DisplayName $u.username $namesMap $u.name)
+        displayName = (Get-DisplayName $u.username $namesMap $existingDisplayNames $u.name)
         total = [int]$u.total
         uniqueSkus = [int]$u.unique.Count
         days = $dayMap
