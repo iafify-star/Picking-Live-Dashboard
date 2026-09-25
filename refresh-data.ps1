@@ -123,6 +123,7 @@ $idxUser = [array]::IndexOf($header, "username")
 $idxSku = [array]::IndexOf($header, "sku")
 $idxPicked = [array]::IndexOf($header, "picked_at")
 $idxStatus = [array]::IndexOf($header, "line_status")
+$idxPickType = [array]::IndexOf($header, "picking_type")
 
 if ($idxUser -lt 0 -or $idxSku -lt 0 -or $idxPicked -lt 0) {
     $parser.Close()
@@ -135,6 +136,7 @@ $existingDisplayNames = Load-ExistingDisplayNames $OutFile
 $users = @{}
 $allSkus = @{}
 $daysSet = @{}
+$pickTypesSet = @{}
 $total = 0
 $skipped = 0
 
@@ -153,9 +155,13 @@ while (-not $parser.EndOfData) {
     $sku = $(if ($idxSku -lt $fields.Length) { $fields[$idxSku] } else { "" }).Trim()
     if (-not $user) { continue }
 
+    $pickType = $(if ($idxPickType -ge 0 -and $idxPickType -lt $fields.Length) { $fields[$idxPickType].Trim() } else { "" })
+    if (-not $pickType) { $pickType = "unknown" }
+
     $total++
     $daysSet[$when.Date] = $true
     if ($sku) { $allSkus[$sku] = $true }
+    $pickTypesSet[$pickType] = $true
 
     if (-not $users.ContainsKey($user)) {
         $users[$user] = @{
@@ -164,12 +170,15 @@ while (-not $parser.EndOfData) {
             total = 0
             unique = @{}
             days = @{}
+            pickTypes = @{}
         }
     }
 
     $u = $users[$user]
     $u.total++
     if ($sku) { $u.unique[$sku] = $true }
+    if (-not $u.pickTypes.ContainsKey($pickType)) { $u.pickTypes[$pickType] = 0 }
+    $u.pickTypes[$pickType]++
 
     if (-not $u.days.ContainsKey($when.Date)) {
         $hourSkus = New-Object object[] 24
@@ -179,6 +188,7 @@ while (-not $parser.EndOfData) {
             unique = @{}
             hoursQty = New-Object int[] 24
             hourSkus = $hourSkus
+            byType = @{}
         }
     }
 
@@ -188,6 +198,24 @@ while (-not $parser.EndOfData) {
     if ($when.Hour -ge 0 -and $when.Hour -le 23) {
         $day.hoursQty[$when.Hour]++
         if ($sku) { $day.hourSkus[$when.Hour][$sku] = $true }
+    }
+
+    if (-not $day.byType.ContainsKey($pickType)) {
+        $typeHourSkus = New-Object object[] 24
+        for ($i = 0; $i -lt 24; $i++) { $typeHourSkus[$i] = @{} }
+        $day.byType[$pickType] = @{
+            total = 0
+            unique = @{}
+            hoursQty = New-Object int[] 24
+            hourSkus = $typeHourSkus
+        }
+    }
+    $tDay = $day.byType[$pickType]
+    $tDay.total++
+    if ($sku) { $tDay.unique[$sku] = $true }
+    if ($when.Hour -ge 0 -and $when.Hour -le 23) {
+        $tDay.hoursQty[$when.Hour]++
+        if ($sku) { $tDay.hourSkus[$when.Hour][$sku] = $true }
     }
 }
 $parser.Close()
@@ -201,11 +229,28 @@ $userList = foreach ($key in $users.Keys) {
         for ($i = 0; $i -lt 24; $i++) {
             $hoursSku[$i] = [int]$info.hourSkus[$i].Count
         }
+        $byTypeMap = @{}
+        if ($info.ContainsKey("byType")) {
+            foreach ($pt in $info.byType.Keys) {
+                $ptInfo = $info.byType[$pt]
+                $ptHoursSku = New-Object int[] 24
+                for ($i = 0; $i -lt 24; $i++) {
+                    $ptHoursSku[$i] = [int]$ptInfo.hourSkus[$i].Count
+                }
+                $byTypeMap[$pt] = @{
+                    qty = [int]$ptInfo.total
+                    uniqueSkus = [int]$ptInfo.unique.Count
+                    hoursQty = @($ptInfo.hoursQty)
+                    hoursSku = @($ptHoursSku)
+                }
+            }
+        }
         $dayMap[$d] = @{
             qty = [int]$info.total
             uniqueSkus = [int]$info.unique.Count
             hoursQty = @($info.hoursQty)
             hoursSku = @($hoursSku)
+            byType = $byTypeMap
         }
     }
     [ordered]@{
@@ -214,6 +259,7 @@ $userList = foreach ($key in $users.Keys) {
         displayName = (Get-DisplayName $u.username $namesMap $existingDisplayNames $u.name)
         total = [int]$u.total
         uniqueSkus = [int]$u.unique.Count
+        pickTypes = $u.pickTypes
         days = $dayMap
     }
 }
@@ -229,6 +275,7 @@ $data = [ordered]@{
     uniqueUsers = $sortedUsers.Count
     uniqueSkus = $allSkus.Count
     skipped = $skipped
+    pickingTypes = @($pickTypesSet.Keys | Sort-Object)
     days = $days
     users = $sortedUsers
 }

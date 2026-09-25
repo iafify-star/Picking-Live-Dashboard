@@ -25,6 +25,8 @@ const TRANSLATIONS = {
     'shift.night'       : 'Night (00:00 - 08:00)',
     'label.hub'         : 'Hub / Team',
     'hub.all'           : 'All Hubs',
+    'label.pickType'    : 'Picking Type',
+    'pickType.all'      : 'All Types',
     'btn.idleOnly'      : '⚠️ Idle Only',
     'btn.resetAll'      : '🔄 Clear All Filters',
     'label.search'      : 'Search user',
@@ -109,6 +111,8 @@ const TRANSLATIONS = {
     'shift.night'       : 'ليلي (00:00 - 08:00)',
     'label.hub'         : 'الفرع / الفريق',
     'hub.all'           : 'كل الفروع',
+    'label.pickType'    : 'نوع البيك',
+    'pickType.all'      : 'كل الأنواع',
     'btn.idleOnly'      : '⚠️ المتوقفين فقط',
     'btn.resetAll'      : '🔄 إلغاء كل الفلاتر',
     'label.search'      : 'بحث عن مستخدم',
@@ -200,6 +204,7 @@ const els = {
   dayChips          : document.getElementById("dayChips"),
   shiftChips        : document.getElementById("shiftChips"),
   hubSelect         : document.getElementById("hubSelect"),
+  pickTypeSelect    : document.getElementById("pickTypeSelect"),
   searchInput       : document.getElementById("searchInput"),
   sortSelect        : document.getElementById("sortSelect"),
   idleToggleBtn     : document.getElementById("idleToggleBtn"),
@@ -225,6 +230,7 @@ const state = {
   search      : "",
   sort        : "qty",
   hub         : "",
+  pickType    : "",
   idleOnly    : false,
   tvMode      : false,
   target      : (() => { try { return Number(localStorage.getItem("shift_target")) || 5000; } catch (_) { return 5000; } })(),
@@ -356,6 +362,8 @@ function applyLang() {
   if (state.lastMeta) setMeta(state.lastMeta.key, state.lastMeta.params);
 
   populateHourSelects();
+  if (state.data && state.data.pickingTypes) populatePickTypeSelect(state.data.pickingTypes);
+  if (state.data && state.data.users) populateHubSelect(state.data.users);
 
   // Re-render table / KPIs so dynamic strings update too
   if (state.data) render();
@@ -442,6 +450,16 @@ function emptyHours() {
 function dayInfo(user, day) {
   const info = user.days && user.days[day];
   if (!info) return emptyHours();
+  if (state.pickType) {
+    const tInfo = info.byType && info.byType[state.pickType];
+    if (!tInfo) return emptyHours();
+    return {
+      qty       : Number(tInfo.qty || 0),
+      uniqueSkus: Number(tInfo.uniqueSkus || 0),
+      hoursQty  : padHours(tInfo.hoursQty),
+      hoursSku  : padHours(tInfo.hoursSku),
+    };
+  }
   return {
     qty       : Number(info.qty || info.total || 0),
     uniqueSkus: Number(info.uniqueSkus || 0),
@@ -466,7 +484,9 @@ function rangeStats(user) {
       out.qty        += info.qty;
       out.uniqueSkus += info.uniqueSkus;
     });
-    if (days.length > 1) out.uniqueSkus = Number(user.uniqueSkus || out.uniqueSkus);
+    if (!state.pickType && days.length > 1) {
+      out.uniqueSkus = Number(user.uniqueSkus || out.uniqueSkus);
+    }
   } else {
     let filteredQty = 0;
     let filteredSku = 0;
@@ -527,6 +547,18 @@ function populateHubSelect(users) {
   els.hubSelect.value = current;
 }
 
+function populatePickTypeSelect(types) {
+  if (!els.pickTypeSelect) return;
+  const current = state.pickType;
+  let html = `<option value="">${t("pickType.all")}</option>`;
+  (types || []).forEach((pt) => {
+    const label = pt.replace(/_/g, " ");
+    html += `<option value="${pt}" ${current === pt ? "selected" : ""}>${label}</option>`;
+  });
+  els.pickTypeSelect.innerHTML = html;
+  els.pickTypeSelect.value = current;
+}
+
 // ─── Data loading ─────────────────────────────────────────────────────────────
 async function loadData(fresh) {
   setLiveState("sync");
@@ -552,6 +584,7 @@ async function loadData(fresh) {
     applyNamesToUsers(data.users);
     state.data = data;
     populateHubSelect(data.users);
+    populatePickTypeSelect(data.pickingTypes);
     const last  = data.days[data.days.length - 1] || "";
     const first = data.days[0] || last;
     if (!state.from || !data.days.includes(state.from)) state.from = last;
@@ -1024,6 +1057,13 @@ if (els.hubSelect) {
   });
 }
 
+if (els.pickTypeSelect) {
+  els.pickTypeSelect.addEventListener("change", () => {
+    state.pickType = els.pickTypeSelect.value;
+    render();
+  });
+}
+
 if (els.idleToggleBtn) {
   els.idleToggleBtn.addEventListener("click", () => {
     state.idleOnly = !state.idleOnly;
@@ -1039,6 +1079,9 @@ if (els.resetFiltersBtn) {
 
     state.hub = "";
     if (els.hubSelect) els.hubSelect.value = "";
+
+    state.pickType = "";
+    if (els.pickTypeSelect) els.pickTypeSelect.value = "";
 
     state.hourFrom = "";
     state.hourTo = "";

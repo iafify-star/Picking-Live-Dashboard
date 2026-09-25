@@ -199,6 +199,7 @@ function buildPickingData(csvText, source, namesMap) {
   const idxSku = header.indexOf("sku");
   const idxPicked = header.indexOf("picked_at");
   const idxStatus = header.indexOf("line_status");
+  const idxPickType = header.indexOf("picking_type");
 
   if (idxUser < 0 || idxSku < 0 || idxPicked < 0) {
     throw new Error("Missing columns: username / sku / picked_at");
@@ -207,6 +208,7 @@ function buildPickingData(csvText, source, namesMap) {
   const users = new Map();
   const allSkus = new Set();
   const daysSet = new Set();
+  const pickTypesSet = new Set();
   let total = 0;
   let skipped = 0;
 
@@ -229,9 +231,12 @@ function buildPickingData(csvText, source, namesMap) {
     const sku = (f[idxSku] || "").trim();
     if (!username) continue;
 
+    const pickType = (idxPickType >= 0 && idxPickType < f.length ? (f[idxPickType] || "").trim() : "") || "unknown";
+
     total++;
     daysSet.add(when.date);
     if (sku) allSkus.add(sku);
+    pickTypesSet.add(pickType);
 
     let u = users.get(username);
     if (!u) {
@@ -241,11 +246,13 @@ function buildPickingData(csvText, source, namesMap) {
         total: 0,
         unique: new Set(),
         days: new Map(),
+        pickTypes: {},
       };
       users.set(username, u);
     }
     u.total++;
     if (sku) u.unique.add(sku);
+    u.pickTypes[pickType] = (u.pickTypes[pickType] || 0) + 1;
 
     let day = u.days.get(when.date);
     if (!day) {
@@ -254,6 +261,7 @@ function buildPickingData(csvText, source, namesMap) {
         unique: new Set(),
         hoursQty: new Array(24).fill(0),
         hourSkuSets: Array.from({ length: 24 }, () => new Set()),
+        byType: {},
       };
       u.days.set(when.date, day);
     }
@@ -263,17 +271,43 @@ function buildPickingData(csvText, source, namesMap) {
       day.hoursQty[when.hour]++;
       if (sku) day.hourSkuSets[when.hour].add(sku);
     }
+
+    if (!day.byType[pickType]) {
+      day.byType[pickType] = {
+        total: 0,
+        unique: new Set(),
+        hoursQty: new Array(24).fill(0),
+        hourSkuSets: Array.from({ length: 24 }, () => new Set()),
+      };
+    }
+    const bt = day.byType[pickType];
+    bt.total++;
+    if (sku) bt.unique.add(sku);
+    if (when.hour >= 0 && when.hour <= 23) {
+      bt.hoursQty[when.hour]++;
+      if (sku) bt.hourSkuSets[when.hour].add(sku);
+    }
   }
 
   const userList = [];
   for (const u of users.values()) {
     const dayMap = {};
     for (const [d, info] of u.days.entries()) {
+      const byTypeOut = {};
+      for (const [pt, tInfo] of Object.entries(info.byType || {})) {
+        byTypeOut[pt] = {
+          qty: tInfo.total,
+          uniqueSkus: tInfo.unique.size,
+          hoursQty: tInfo.hoursQty,
+          hoursSku: tInfo.hourSkuSets.map((s) => s.size),
+        };
+      }
       dayMap[d] = {
         qty: info.total,
         uniqueSkus: info.unique.size,
         hoursQty: info.hoursQty,
         hoursSku: info.hourSkuSets.map((s) => s.size),
+        byType: byTypeOut,
       };
     }
     userList.push({
@@ -282,6 +316,7 @@ function buildPickingData(csvText, source, namesMap) {
       displayName: getDisplayName(u.username, namesMap, u.name),
       total: u.total,
       uniqueSkus: u.unique.size,
+      pickTypes: u.pickTypes,
       days: dayMap,
     });
   }
@@ -297,6 +332,7 @@ function buildPickingData(csvText, source, namesMap) {
     uniqueUsers: userList.length,
     uniqueSkus: allSkus.size,
     skipped,
+    pickingTypes: Array.from(pickTypesSet).sort(),
     days,
     users: userList,
   };
